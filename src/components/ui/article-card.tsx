@@ -6,8 +6,8 @@ export interface ArticleCardProps {
   href: string;
   title: string;
   excerpt: string;
-  date: string;      // e.g. "Mar 16, 2020"
-  readingTime: string; // e.g. "5 min read"
+  date: string;      
+  readingTime: string;
 }
 
 export function ArticleCard({
@@ -20,9 +20,9 @@ export function ArticleCard({
   return (
     <article className="card">
       <div>
+        {/* Only the title text is linked now */}
         <h3 className="card-title">
-          <Link href={href}>
-            <span className="absolute inset-0" />
+          <Link href={href} className="hover:underline">
             {title}
           </Link>
         </h3>
