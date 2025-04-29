@@ -1,6 +1,6 @@
 // src/app/page.tsx
 import Hero from "@/components/home/Hero";
-import { ArticleCard } from "@/components/ui/article-card";
+// import { ArticleCard } from "@/components/ui/article-card";
 
 
 export default function Page() {

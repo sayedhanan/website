@@ -1,25 +1,31 @@
-// src/app/blog/[slug]/page.tsx
-import { getPostBySlug, getPostSlugs, type Post } from "@/utils/mdx"; // Added getPostSlugs import
-import { MDXRemote } from "next-mdx-remote/rsc";
+// src/app/blog/[slug]/page.tsx - Debugging Version
+import { getPostBySlug, getPostSlugs } from '@/utils/mdx';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export async function generateStaticParams() {
-  const slugs = getPostSlugs();
-  return slugs.map((slug: string) => ({ slug })); // Added type annotation for slug
+  return getPostSlugs().map((slug) => ({ slug }));
 }
 
 interface PostPageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params;
-  const post: Post = await getPostBySlug(slug);
+  const post = await getPostBySlug(params.slug);
+
 
   return (
-    <article className="section-wrapper section-spacing prose">
-      <h1>{post.title}</h1>
-      <time dateTime={post.date}>{post.date}</time>
-      <MDXRemote source={post.content} />
+    <article className="section-wrapper section-spacing prose dark:prose-invert">
+      <h1 className="mb-4">{post.title}</h1>
+      <time dateTime={post.date} className="block mb-6 text-sm text-[var(--color-secondary-text)]">
+        {post.date} · {post.readingTime}
+      </time>
+      
+      
+      {/* Actual MDX content */}
+      <div className="mdx-content">
+        <MDXRemote source={post.content} />
+      </div>
     </article>
   );
 }

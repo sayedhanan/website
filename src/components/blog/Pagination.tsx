@@ -15,7 +15,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
           Prev
         </Link>
       )}
-      {pages.map(page => (
+      {pages.map((page) => (
         <Link
           key={page}
           href={`/blog?page=${page}`}
