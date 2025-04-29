@@ -1,5 +1,5 @@
 // src/app/page.tsx
-import Hero from "@/components/ui/hero";
+import Hero from "@/components/home/Hero";
 
 export default function Page() {
   return (
