@@ -1,0 +1,66 @@
+@layer utilities {
+
+  /* Text & border utilities using var() directly */
+  .text-secondary {
+    color: var(--color-secondary-text) !important;
+  }
+
+  .border-divider {
+    border-color: var(--color-border) !important;
+  }
+}
+
+
+/* Wrapper for consisten width */
+@layer utilities {
+  .section-wrapper {
+    /* Fixed max-width matching 7xl, centered */
+    max-inline-size: theme("maxWidth.7xl");
+    margin-inline: auto;
+
+    /* Responsive horizontal gutters */
+    padding-inline: 1rem;
+    /* 16px on default */
+  }
+
+  @screen sm {
+    .section-wrapper {
+      padding-inline: 1.5rem;
+    }
+
+    /* 24px at sm+ */
+  }
+
+  @screen lg {
+    .section-wrapper {
+      padding-inline: 2rem;
+    }
+
+    /* 32px at lg+ */
+  }
+}
+
+
+/* For vertical width */
+@layer utilities {
+  .section-spacing {
+    padding-block: 3rem;
+    /* py-12 = 48px */
+  }
+
+  @screen md {
+    .section-spacing {
+      padding-block: 4rem;
+    }
+
+    /* py-16 = 64px */
+  }
+
+  @screen lg {
+    .section-spacing {
+      padding-block: 5rem;
+    }
+
+    /* py-20 = 80px */
+  }
+}

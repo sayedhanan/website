@@ -1,0 +1,48 @@
+/* Design tokens for colors */
+@theme {
+  /* Light mode (default) */
+  --color-background:      #FAFAFA;
+  --color-surface:         #FFFFFF;
+  --color-primary-text:    #212121;
+  --color-secondary-text:  #424242;
+  --color-border:          #E0E0E0;
+  --color-accent:          #00796B;
+  --color-accent-hover:    #00695C;
+
+  /* Semantic colors */
+  --color-success:         #388E3C;  /* Green for success */
+  --color-success-bg:      #E8F5E9;  /* Light green background */
+
+  --color-error:           #D32F2F;  /* Red for errors */
+  --color-error-bg:        #FFEBEE;  /* Light red background */
+
+  --color-warning:         #FBC02D;  /* Yellow for warnings */
+  --color-warning-bg:      #FFF8E1;  /* Light yellow background */
+
+  --color-info:            #0288D1;  /* Blue for general info */
+  --color-info-bg:         #E1F5FE;  /* Light blue background */
+}
+
+/* Dark-mode overrides */
+.dark {
+  --color-background:      #121212;
+  --color-surface:         #1E1E1E;
+  --color-primary-text:    #E0E0E0;
+  --color-secondary-text:  #B0B0B0;
+  --color-border:          #2C2C2C;
+  --color-accent:          #80CBC4;
+  --color-accent-hover:    #4DB6AC;
+
+  /* Semantic colors (dark mode) */
+  --color-success:         #81C784;
+  --color-success-bg:      #1B5E20;
+
+  --color-error:           #EF9A9A;
+  --color-error-bg:        #B71C1C;
+
+  --color-warning:         #FFD54F;
+  --color-warning-bg:      #F57F17;
+
+  --color-info:            #4FC3F7;
+  --color-info-bg:         #01579B;
+}
