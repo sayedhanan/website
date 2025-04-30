@@ -1,6 +1,6 @@
 // src/components/home/RecentPostsSection.tsx
 import { getPosts, type Post } from "@/utils/api";
-import { ArticleCard } from "@/components/ui/article-card";
+import { ArticleCard } from "@/components/ui/article-card"
 
 export default async function RecentPostsSection() {
   const { posts }: { posts: Post[] } = await getPosts({ page: 1, limit: 3 });

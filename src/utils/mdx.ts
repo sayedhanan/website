@@ -14,6 +14,7 @@ export interface Post {
   readingTime: string;
   excerpt: string;
   content: string; // Changed to string instead of MDXRemoteSerializeResult
+  abstract?: string;
 }
 
 export function getPostSlugs(): string[] {

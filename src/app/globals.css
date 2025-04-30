@@ -1,8 +1,11 @@
 /* 1. Import Tailwind’s entire framework */
 @import "tailwindcss";
 
+@plugin "@tailwindcss/typography";
+
 /* 2. Bring in all theme partials */
 @import "../styles/theme.css";
+
 
 /* 3. CSS-first design tokens (add any extra vars here) */
 @theme {
@@ -11,17 +14,55 @@
 
 /* 4. Additional base resets */
 @layer base {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
+
   body {
     margin: 0;
     padding: 0;
   }
 }
 
+
+@layer utilities {
+  /* 1. Make all text within .prose inherit the container’s color */
+  .prose {
+    color: inherit; /* base color for body text */
+  }
+
+  /* 2. Override every element selector the Typography plugin colors */
+  .prose :where(
+    h1, h2, h3, h4, h5, h6,         /* headings */
+    p,                              /* paragraphs */
+    blockquote,                     /* block quotes */
+    strong,                         /* bold text */
+    code,                           /* inline code */
+    pre,                            /* code blocks */
+    a,                              /* links */
+    ol > li::before,                /* ordered-list counters */
+    ul > li::before,                /* unordered-list bullets */
+    thead th,                       /* table headers */
+    tbody td                       /* table cells */
+  ) {
+    color: inherit;                /* force inheritance */
+  }
+
+  /* 3. Ensure list markers & borders also inherit */
+  .prose ul > li::before {
+    background-color: currentColor; /* bullet inherits text color */ 
+  }
+  .prose :where(hr, blockquote, thead, tbody tr) {
+    border-color: currentColor;     /* borders inherit text color */
+  }
+}
+
+/* Default (light-mode) prose variables */
+
+
 /* 5. Stub layers for any globals you want here */
 /* @layer components { … } */
 /* @layer utilities { … } */
-
-

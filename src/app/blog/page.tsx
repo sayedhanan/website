@@ -1,17 +1,23 @@
+// src/app/blog/page.tsx
 import { getAllPosts, type Post } from '@/utils/mdx';
 import ArticleCard from '@/components/ui/article-card';
 import Pagination from '@/components/blog/Pagination';
 
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 interface BlogPageProps {
-  searchParams?: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
-export default function BlogPage({ searchParams }: BlogPageProps) {
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const { page } = await searchParams;
+  const pageNumber = parseInt(page ?? '1', 10);
+
   const allPosts: Omit<Post, 'content'>[] = getAllPosts();
-  const page = parseInt(searchParams?.page ?? '1', 10);
   const limit = 9;
   const totalPages = Math.ceil(allPosts.length / limit);
-  const posts = allPosts.slice((page - 1) * limit, page * limit);
+  const posts = allPosts.slice((pageNumber - 1) * limit, pageNumber * limit);
 
   return (
     <section className="section-wrapper section-spacing">
@@ -28,7 +34,7 @@ export default function BlogPage({ searchParams }: BlogPageProps) {
           />
         ))}
       </div>
-      <Pagination currentPage={page} totalPages={totalPages} />
+      <Pagination currentPage={pageNumber} totalPages={totalPages} />
     </section>
   );
 }
