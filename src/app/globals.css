@@ -4,8 +4,6 @@
 /* 2. Tailwind & theme imports */
 @import "tailwindcss";
 @import "../styles/theme.css";
-/* Import a prism theme */
-
 
 /* 3. Layer declarations */
 @layer theme, base, components, utilities;
@@ -13,224 +11,7 @@
 /* 4. Typography plugin */
 @plugin "@tailwindcss/typography";
 
-@layer base {
-  /* — BASE CODE BLOCK STYLING FOR PRISM — */
-  /* This section fixes background colors and general code block styling */
-  .prose code[class*="language-"],
-  .prose pre[class*="language-"] {
-    color: #24292e;
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-    text-align: left;
-    white-space: pre;
-    word-spacing: normal;
-    word-break: normal;
-    word-wrap: normal;
-    line-height: 1.5;
-    tab-size: 2;
-    hyphens: none;
-  }
-
-  /* Light mode code block background */
-  .prose pre[class*="language-"] {
-    background-color: #f6f8fa;
-    border: 1px solid #e1e4e8;
-  }
-
-  /* Dark mode code block background */
-  .dark .prose pre[class*="language-"] {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2f35;
-    color: #e1e4e8;
-  }
-
-  /* — LIGHT MODE TOKENS — */
-  .prose pre code .token.comment,
-  .prose .token.comment {
-    color: #6a737d;
-  }
-
-  /* comments */
-  .prose pre code .token.keyword,
-  .prose .token.keyword {
-    color: #d73a49;
-  }
-
-  /* const, let, if… */
-  .prose pre code .token.string,
-  .prose .token.string {
-    color: #032f62;
-  }
-
-  /* "hello" */
-  .prose pre code .token.function,
-  .prose .token.function {
-    color: #005cc5;
-  }
-
-  /* function names */
-  .prose pre code .token.punctuation,
-  .prose .token.punctuation {
-    color: #24292e;
-  }
-
-  /* ; , . { } */
-
-  /* Additional token types you might want to style */
-  .prose pre code .token.boolean,
-  .prose .token.boolean {
-    color: #0550ae;
-  }
-
-  /* true, false */
-  .prose pre code .token.number,
-  .prose .token.number {
-    color: #0550ae;
-  }
-
-  /* 42, 3.14 */
-  .prose pre code .token.operator,
-  .prose .token.operator {
-    color: #d73a49;
-  }
-
-  /* +, =, => */
-  .prose pre code .token.class-name,
-  .prose .token.class-name {
-    color: #6f42c1;
-  }
-
-  /* class names */
-  .prose pre code .token.tag,
-  .prose .token.tag {
-    color: #22863a;
-  }
-
-  /* HTML/XML tags */
-  .prose pre code .token.attr-name,
-  .prose .token.attr-name {
-    color: #6f42c1;
-  }
-
-  /* HTML attributes */
-  .prose pre code .token.regex,
-  .prose .token.regex {
-    color: #032f62;
-  }
-
-  /* regular expressions */
-  .prose pre code .token.variable,
-  .prose .token.variable {
-    color: #e36209;
-  }
-
-  /* variables */
-  .prose pre code .token.constant,
-  .prose .token.constant {
-    color: #005cc5;
-  }
-
-  /* constants */
-
-  /* — DARK MODE OVERRIDES — */
-  .dark .prose pre code .token.comment,
-  .dark .prose .token.comment {
-    color: #8b949e;
-  }
-
-  .dark .prose pre code .token.keyword,
-  .dark .prose .token.keyword {
-    color: #c58cff;
-  }
-
-  .dark .prose pre code .token.string,
-  .dark .prose .token.string {
-    color: #9ecbff;
-  }
-
-  .dark .prose pre code .token.function,
-  .dark .prose .token.function {
-    color: #79c0ff;
-  }
-
-  .dark .prose pre code .token.punctuation,
-  .dark .prose .token.punctuation {
-    color: #8b949e;
-  }
-
-  /* Dark mode equivalents */
-  .dark .prose pre code .token.boolean,
-  .dark .prose .token.boolean {
-    color: #79c0ff;
-  }
-
-  .dark .prose pre code .token.number,
-  .dark .prose .token.number {
-    color: #79c0ff;
-  }
-
-  .dark .prose pre code .token.operator,
-  .dark .prose .token.operator {
-    color: #c58cff;
-  }
-
-  .dark .prose pre code .token.class-name,
-  .dark .prose .token.class-name {
-    color: #d2a8ff;
-  }
-
-  .dark .prose pre code .token.tag,
-  .dark .prose .token.tag {
-    color: #7ee787;
-  }
-
-  .dark .prose pre code .token.attr-name,
-  .dark .prose .token.attr-name {
-    color: #d2a8ff;
-  }
-
-  .dark .prose pre code .token.regex,
-  .dark .prose .token.regex {
-    color: #9ecbff;
-  }
-
-  .dark .prose pre code .token.variable,
-  .dark .prose .token.variable {
-    color: #ffa657;
-  }
-
-  .dark .prose pre code .token.constant,
-  .dark .prose .token.constant {
-    color: #79c0ff;
-  }
-  
-  /* Line highlighting features */
-  .prose .highlight-line {
-    background-color: rgba(255, 255, 0, 0.1);
-    display: block;
-    margin: 0 -1rem;
-    padding: 0 1rem;
-  }
-
-  .dark .prose .highlight-line {
-    background-color: rgba(255, 255, 0, 0.05);
-  }
-
-  /* Line numbers if you enabled them */
-  .prose .line-number::before {
-    display: inline-block;
-    width: 1.8em;
-    text-align: right;
-    margin-right: 1em;
-    color: #6a737d;
-    content: attr(line);
-  }
-
-  .dark .prose .line-number::before {
-    color: #8b949e;
-  }
-}
-
-/* 5. Additional base resets */
+/* 5. Base layer */
 @layer base {
   *,
   *::before,
@@ -244,6 +25,7 @@
   }
 }
 
+/* 6. Utility layer */
 @layer utilities {
   .prose {
     color: inherit;
@@ -264,33 +46,22 @@
     border-color: currentColor;
   }
 
-  /* Enhanced code block styling */
   .prose pre {
     padding: 1rem;
     border-radius: 0.5rem;
     overflow-x: auto;
-    
-    /* Make sure background colors don't get overridden */
-    background-color: #f6f8fa !important; /* Light mode background */
-  }
-  
-  .dark .prose pre {
-    background-color: #1e1e1e !important; /* Dark mode background */
+    background-color: #f6f8fa !important;
   }
 
-  /* Remove default background from hljs/prism if it's getting applied */
-  .prose pre code.hljs,
-  .prose pre code[class*="language-"] {
-    background-color: transparent !important;
-    padding: 0;
+  .dark .prose pre {
+    background-color: #1e1e1e !important;
   }
 
   .prose code {
     font-family: ui-monospace, monospace;
     font-size: 0.875rem;
   }
-  
-  /* Optional: Nice scrollbars for code blocks */
+
   .prose pre::-webkit-scrollbar {
     width: 8px;
     height: 8px;

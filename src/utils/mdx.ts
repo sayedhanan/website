@@ -1,59 +1,76 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import readingTime from 'reading-time';
-import { compileMDX } from 'next-mdx-remote/rsc';
-import rehypePrismPlus from 'rehype-prism-plus';
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import readingTime from 'reading-time'
+import { compileMDX } from 'next-mdx-remote/rsc'
 
-const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
+// Only import rehype-pretty-code - we'll use the built-in theme support
+import rehypePrettyCode from 'rehype-pretty-code'
 
 export interface Post {
-  slug: string;
-  title: string;
-  date: string;
-  readingTime: string;
-  abstract: string;
-  content: React.ReactNode;
+  slug: string
+  title: string
+  date: string
+  readingTime: string
+  abstract: string
+  content: React.ReactNode
 }
+
+const postsDir = path.join(process.cwd(), 'src', 'content', 'blog')
 
 export function getPostSlugs(): string[] {
   return fs
     .readdirSync(postsDir)
     .filter((f) => f.endsWith('.mdx'))
-    .map((f) => f.replace(/\.mdx$/, ''));
+    .map((f) => f.replace(/\.mdx$/, ''))
 }
 
 export async function getPostBySlug(slug: string): Promise<Post> {
-  const fullPath = path.join(postsDir, `${slug}.mdx`);
-  const raw = fs.readFileSync(fullPath, 'utf-8');
+  const fullPath = path.join(postsDir, `${slug}.mdx`)
+  const raw = fs.readFileSync(fullPath, 'utf-8')
+  const { data, content: mdxSource } = matter(raw)
 
-  const { data, content: mdxSource } = matter(raw);
+  // Configure rehype-pretty-code with a simpler approach
+  const options = {
+    // Use the built-in theme without custom getHighlighter function
+    theme: 'one-dark-pro',
+    
+    // Line handling
+    onVisitLine(node: any) {
+      if (node.children.length === 0) {
+        node.children = [{ type: 'text', value: ' ' }]
+      }
+      node.properties.className = ['line']
+    },
+    // Highlighted line handling
+    onVisitHighlightedLine(node: any) {
+      node.properties.className.push('highlight-line')
+    },
+    // Highlighted word handling
+    onVisitHighlightedWord(node: any) {
+      node.properties.className = ['word']
+    },
+    // Don't keep the background from Shiki - we'll style it with Tailwind
+    keepBackground: false,
+  }
 
-  // Using rehype-prism-plus for syntax highlighting
+  // Import the custom components
+  const { mdxComponents } = await import('./mdx-components')
+  
   const { content } = await compileMDX({
     source: mdxSource,
     options: {
       mdxOptions: {
-        remarkPlugins: [],
-        rehypePlugins: [
-          [rehypePrismPlus, { 
-            ignoreMissing: true,
-            showLineNumbers: false,
-            defaultLanguage: 'text',
-            // Add this line to ensure proper language class application
-            transformInlineCode: false,
-            // Make sure we're using the right class structure
-            classPrefix: 'language-'
-          }]
-        ],
+        rehypePlugins: [[rehypePrettyCode, options]],
       },
     },
-  });
+    components: mdxComponents,
+  })
 
   const abstract =
     typeof data.excerpt === 'string'
       ? data.excerpt
-      : mdxSource.trim().slice(0, 200) + (mdxSource.length > 200 ? '…' : '');
+      : mdxSource.trim().slice(0, 200) + (mdxSource.length > 200 ? '…' : '')
 
   return {
     slug,
@@ -62,5 +79,5 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     readingTime: data.readingTime ?? readingTime(mdxSource).text,
     abstract,
     content,
-  };
+  }
 }
