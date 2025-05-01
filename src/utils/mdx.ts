@@ -1,9 +1,9 @@
-// src/utils/mdx.tsx
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypePrismPlus from 'rehype-prism-plus';
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
 
@@ -12,9 +12,8 @@ export interface Post {
   title: string;
   date: string;
   readingTime: string;
-  excerpt: string;
-  content: string; // Changed to string instead of MDXRemoteSerializeResult
-  abstract?: string;
+  abstract: string;
+  content: React.ReactNode;
 }
 
 export function getPostSlugs(): string[] {
@@ -26,44 +25,42 @@ export function getPostSlugs(): string[] {
 
 export async function getPostBySlug(slug: string): Promise<Post> {
   const fullPath = path.join(postsDir, `${slug}.mdx`);
-  const source = fs.readFileSync(fullPath, 'utf-8');
-  const { data, content } = matter(source);
+  const raw = fs.readFileSync(fullPath, 'utf-8');
 
-  // Simply pass the content as a string
-  const excerpt =
+  const { data, content: mdxSource } = matter(raw);
+
+  // Using rehype-prism-plus for syntax highlighting
+  const { content } = await compileMDX({
+    source: mdxSource,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [],
+        rehypePlugins: [
+          [rehypePrismPlus, { 
+            ignoreMissing: true,
+            showLineNumbers: false,
+            defaultLanguage: 'text',
+            // Add this line to ensure proper language class application
+            transformInlineCode: false,
+            // Make sure we're using the right class structure
+            classPrefix: 'language-'
+          }]
+        ],
+      },
+    },
+  });
+
+  const abstract =
     typeof data.excerpt === 'string'
       ? data.excerpt
-      : content.trim().slice(0, 200) + (content.length > 200 ? '…' : '');
-  const rt = data.readingTime ?? readingTime(content).text;
+      : mdxSource.trim().slice(0, 200) + (mdxSource.length > 200 ? '…' : '');
 
   return {
     slug,
-    title: data.title,
-    date: data.date,
-    readingTime: rt,
-    excerpt,
-    content, // Just pass the raw content
+    title: data.title as string,
+    date: data.date as string,
+    readingTime: data.readingTime ?? readingTime(mdxSource).text,
+    abstract,
+    content,
   };
-}
-
-export function getAllPosts(): Omit<Post, 'content'>[] {
-  return getPostSlugs()
-    .map((slug) => {
-      const fullPath = path.join(postsDir, `${slug}.mdx`);
-      const source = fs.readFileSync(fullPath, 'utf-8');
-      const { data, content } = matter(source);
-      const excerpt =
-        typeof data.excerpt === 'string'
-          ? data.excerpt
-          : content.trim().slice(0, 200) + (content.length > 200 ? '…' : '');
-      const rt = data.readingTime ?? readingTime(content).text;
-      return {
-        slug,
-        title: data.title,
-        date: data.date,
-        readingTime: rt,
-        excerpt,
-      };
-    })
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
 }

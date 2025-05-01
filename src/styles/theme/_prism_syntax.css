@@ -1,0 +1,160 @@
+/**
+ * Prism syntax highlighting styles
+ * This file contains only the necessary styles for syntax highlighting
+ * with rehype-prism-plus while avoiding conflicts with existing styles
+ */
+
+/* Basic Code Block Styling */
+pre[class*="language-"],
+code[class*="language-"] {
+  color: var(--prism-text-color, #f8f8f2);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 2;
+  hyphens: none;
+}
+
+/* Make sure Prism styling isn't overridden */
+.prose .code-highlight {
+  display: block;
+}
+
+.prose .code-line {
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+  min-height: 1.5rem;
+}
+
+/* Ensure Prism tokens are visible */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #7C7C7C;
+}
+
+.token.punctuation {
+  color: #c5c8c6;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.property,
+.token.keyword,
+.token.tag {
+  color: #96CBFE;
+}
+
+.token.class-name {
+  color: #FFFFB6;
+  text-decoration: underline;
+}
+
+.token.boolean,
+.token.constant {
+  color: #99CC99;
+}
+
+.token.symbol,
+.token.deleted {
+  color: #f92672;
+}
+
+.token.number {
+  color: #FF73FD;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #A8FF60;
+}
+
+.token.variable {
+  color: #C6C5FE;
+}
+
+.token.operator {
+  color: #EDEDED;
+}
+
+.token.entity {
+  color: #FFFFB6;
+  cursor: help;
+}
+
+.token.url {
+  color: #96CBFE;
+}
+
+.language-css .token.string,
+.style .token.string {
+  color: #87C38A;
+}
+
+.token.atrule,
+.token.attr-value {
+  color: #F9EE98;
+}
+
+.token.function {
+  color: #DAD085;
+}
+
+.token.regex {
+  color: #E9C062;
+}
+
+.token.important {
+  color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+/* Line highlighting */
+.code-line.highlight-line {
+  background-color: rgba(255, 255, 255, 0.07);
+  border-left: 2px solid #f9f9f9;
+}
+
+/* Ensure background colors are applied */
+.prose pre[class*="language-"] {
+  background-color: #1e1e1e;
+  border-radius: 0.5rem;
+  padding: 1rem 0;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+/* Dark mode overrides */
+.dark .prose pre[class*="language-"] {
+  background-color: #1e1e1e;
+}
+
+/* Line numbers if enabled */
+.line-number::before {
+  display: inline-block;
+  width: 1.8em;
+  text-align: right;
+  margin-right: 1em;
+  color: rgba(150, 150, 150, 0.7);
+  content: attr(line);
+}

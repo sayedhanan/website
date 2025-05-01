@@ -1,5 +1,5 @@
 // src/app/blog/page.tsx
-import { getAllPosts, type Post } from '@/utils/mdx';
+import { getPostSlugs, getPostBySlug, type Post } from '@/utils/mdx';
 import ArticleCard from '@/components/ui/article-card';
 import Pagination from '@/components/blog/Pagination';
 
@@ -14,7 +14,15 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { page } = await searchParams;
   const pageNumber = parseInt(page ?? '1', 10);
 
-  const allPosts: Omit<Post, 'content'>[] = getAllPosts();
+  // Load all post slugs and fetch metadata for each post
+  const slugs = getPostSlugs();
+  const postsData = await Promise.all(
+    slugs.map((slug) => getPostBySlug(slug))
+  );
+
+  // Strip out `content` to match ArticleCard props
+  const allPosts: Omit<Post, 'content'>[] = postsData.map(({ content, ...meta }) => meta);
+
   const limit = 9;
   const totalPages = Math.ceil(allPosts.length / limit);
   const posts = allPosts.slice((pageNumber - 1) * limit, pageNumber * limit);
@@ -28,7 +36,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             key={post.slug}
             href={`/blog/${post.slug}`}
             title={post.title}
-            excerpt={post.excerpt}
+            excerpt={post.abstract}
             date={post.date}
             readingTime={post.readingTime}
           />
