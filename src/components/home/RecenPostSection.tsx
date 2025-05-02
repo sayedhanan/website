@@ -1,4 +1,4 @@
-import { getPostSlugs, getPostBySlug, type Post } from '@/utils/mdx';
+import { getPostSlugs, getPostBySlug, type Post } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 
 export default async function RecentPostsSection() {

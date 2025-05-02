@@ -1,5 +1,5 @@
 // src/components/blog/BlogGrid.tsx
-import { getAllPosts, type Post } from "@/utils/mdx";
+import { getAllPosts, type Post } from "@/utils/blog-mdx";
 import { ArticleCard } from "@/components/ui/article-card";
 import Pagination from "@/components/blog/Pagination";
 

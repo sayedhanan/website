@@ -1,6 +1,6 @@
 // File: src/app/blog/[slug]/page.tsx
 
-import { getPostBySlug, getPostSlugs } from '@/utils/mdx';
+import { getPostBySlug, getPostSlugs } from '@/utils/blog-mdx';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
