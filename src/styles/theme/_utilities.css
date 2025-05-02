@@ -10,7 +10,7 @@
 
   /* Horizontal wrapper: fixed max width + responsive gutters */
   .section-wrapper {
-    max-inline-size: theme("maxWidth.6xl"); /* cap at 6xl */                    /* :contentReference[oaicite:5]{index=5} */
+    max-inline-size: theme("maxWidth.7xl"); /* cap at 6xl */                    /* :contentReference[oaicite:5]{index=5} */
     margin-inline: auto;                                                        /* center content :contentReference[oaicite:6]{index=6} */
     padding-inline: 1rem;                                                       /* 16px default, matches px-4 */ 
   }
