@@ -1,4 +1,4 @@
-// utils/mdx.ts
+// utils/notes-mdx.ts
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -7,8 +7,10 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 // import { transformerCopyButton } from '@rehype-pretty/transformers';
 import { readFile } from 'node:fs/promises';
+import type { Element } from 'hast';
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'notes');
+
 const theme = JSON.parse(
   await readFile(
     path.join(process.cwd(), 'src', 'themes', 'one-dark-pro.json'),
@@ -39,7 +41,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 
   const options = {
     theme,
-    defaultLang: "python",
+    defaultLang: 'python',
     keepBackground: false,
     transformers: [
       // transformerCopyButton({
@@ -47,16 +49,24 @@ export async function getPostBySlug(slug: string): Promise<Post> {
       //   feedbackDuration: 3_000,
       // }),
     ],
-    onVisitLine(node: any) {
-      if (node.children.length === 0) {
+    onVisitLine(node: Element) {
+      if (!node.children || node.children.length === 0) {
         node.children = [{ type: 'text', value: ' ' }];
       }
+      node.properties ||= {};
       node.properties.className = ['line'];
     },
-    onVisitHighlightedLine(node: any) {
-      node.properties.className.push('highlight-line');
+    onVisitHighlightedLine(node: Element) {
+      node.properties ||= {};
+      const existing = node.properties.className;
+      node.properties.className = Array.isArray(existing)
+        ? [...existing, 'highlight-line']
+        : typeof existing === 'string'
+          ? [existing, 'highlight-line']
+          : ['highlight-line'];
     },
-    onVisitHighlightedWord(node: any) {
+    onVisitHighlightedWord(node: Element) {
+      node.properties ||= {};
       node.properties.className = ['word'];
     },
   };

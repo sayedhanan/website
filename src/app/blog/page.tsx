@@ -1,5 +1,5 @@
-import React from 'react';
-import { getPostSlugs, getPostBySlug, type Post } from '@/utils/blog-mdx';
+// src/app/blog/page.tsx
+import { getPostSlugs, getPostBySlug } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import Pagination from '@/components/blog/Pagination';
 import { BlogHero } from '@/components/blog/Hero';
@@ -7,22 +7,28 @@ import { BlogHero } from '@/components/blog/Hero';
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-interface BlogPageProps {
+// 1️⃣ Props now declare params & searchParams as Promises
+type BlogPageProps = {
+  params: Promise<Record<string, string>>;
   searchParams: Promise<{ page?: string }>;
-}
+};
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const { page } = await searchParams;
-  const pageNumber = parseInt(page ?? '1', 10);
+export default async function BlogPage(props: BlogPageProps) {
+  // 2️⃣ Await both before using
+  const { page = '1' } = await props.searchParams;
+  const pageNumber = parseInt(page, 10);
 
-  // Load all post slugs and fetch metadata for each post
   const slugs = getPostSlugs();
-  const postsData = await Promise.all(
-    slugs.map((slug) => getPostBySlug(slug))
-  );
+  const postsData = await Promise.all(slugs.map(slug => getPostBySlug(slug)));
 
-  // Strip out `content` to match ArticleCard props
-  const allPosts: Omit<Post, 'content'>[] = postsData.map(({ content, ...meta }) => meta);
+
+  const allPosts = postsData.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    abstract: post.abstract,
+    date: post.date,
+    readingTime: post.readingTime,
+  }));
 
   const limit = 9;
   const totalPages = Math.ceil(allPosts.length / limit);

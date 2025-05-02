@@ -1,11 +1,9 @@
-// utils/mdx.ts
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
-// import { transformerCopyButton } from '@rehype-pretty/transformers';
 import { readFile } from 'node:fs/promises';
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
@@ -39,24 +37,18 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 
   const options = {
     theme,
-    defaultLang: "python",
+    defaultLang: 'python',
     keepBackground: false,
-    transformers: [
-      // transformerCopyButton({
-      //   visibility: 'always',
-      //   feedbackDuration: 3_000,
-      // }),
-    ],
-    onVisitLine(node: any) {
+    onVisitLine(node: { children: unknown[]; properties: { className?: string[] } }) {
       if (node.children.length === 0) {
         node.children = [{ type: 'text', value: ' ' }];
       }
       node.properties.className = ['line'];
     },
-    onVisitHighlightedLine(node: any) {
+    onVisitHighlightedLine(node: { properties: { className: string[] } }) {
       node.properties.className.push('highlight-line');
     },
-    onVisitHighlightedWord(node: any) {
+    onVisitHighlightedWord(node: { properties: { className: string[] } }) {
       node.properties.className = ['word'];
     },
   };
@@ -72,8 +64,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 
   const abstract =
     data.excerpt?.toString() ||
-    mdxSource.trim().slice(0, 200) +
-      (mdxSource.length > 200 ? '…' : '');
+    mdxSource.trim().slice(0, 200) + (mdxSource.length > 200 ? '…' : '');
 
   return {
     slug,

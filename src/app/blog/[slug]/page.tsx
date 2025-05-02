@@ -7,8 +7,8 @@ export async function generateStaticParams() {
   return getPostSlugs().map((slug) => ({ slug }));
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = await Promise.resolve(params);
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
 
   let post;
   try {
@@ -21,13 +21,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
   return (
     <section className="section-wrapper section-spacing">
-      {/*
-        Responsive layout:
-        - Single column on small screens with centered article
-        - Three columns on lg+ (25% | 50% | 25%)
-      */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 justify-items-center lg:justify-items-start">
-
         {/* Left aside (hidden on small, 25% on lg) */}
         <aside className="hidden lg:block lg:col-span-3">
           {/* TODO: insert TableOfContents here */}
@@ -47,7 +41,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
         <aside className="hidden lg:block lg:col-span-3">
           {/* TODO: insert RelatedPosts or other component here */}
         </aside>
-
       </div>
     </section>
   );
