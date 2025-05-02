@@ -1,7 +1,8 @@
-// src/app/blog/page.tsx
+import React from 'react';
 import { getPostSlugs, getPostBySlug, type Post } from '@/utils/mdx';
 import ArticleCard from '@/components/ui/article-card';
 import Pagination from '@/components/blog/Pagination';
+import { BlogHero } from '@/components/blog/Hero';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
@@ -28,21 +29,24 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const posts = allPosts.slice((pageNumber - 1) * limit, pageNumber * limit);
 
   return (
-    <section className="section-wrapper section-spacing">
-      <h1 className="text-4xl font-semibold mb-6">All Posts</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <ArticleCard
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            title={post.title}
-            excerpt={post.abstract}
-            date={post.date}
-            readingTime={post.readingTime}
-          />
-        ))}
-      </div>
-      <Pagination currentPage={pageNumber} totalPages={totalPages} />
-    </section>
+    <>
+      <BlogHero />
+      <section className="section-wrapper section-spacing">
+        <h1 className="text-4xl font-semibold mb-6">All Posts</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post) => (
+            <ArticleCard
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              title={post.title}
+              excerpt={post.abstract}
+              date={post.date}
+              readingTime={post.readingTime}
+            />
+          ))}
+        </div>
+        <Pagination currentPage={pageNumber} totalPages={totalPages} />
+      </section>
+    </>
   );
 }
