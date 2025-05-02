@@ -65,7 +65,7 @@ export default function Hero() {
       {/* Hero Image */}
       <div className="flex-1">
         <Image
-          src=""
+          // src=""
           alt="Placeholder hero"
           width={600}
           height={400}
