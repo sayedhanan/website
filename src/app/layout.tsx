@@ -19,5 +19,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-// ❌ Removed: `useEffect` (was unused)
-// ❌ Removed: metadata comment (not needed here)
