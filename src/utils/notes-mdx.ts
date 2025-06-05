@@ -1,3 +1,4 @@
+// src/utils/notes-mdx.ts
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -24,7 +25,7 @@ export type Slug = string[];
 export interface LoadedNote {
   /** The rendered MDX as a React node */
   content: ReactNode;
-  /** Your front‑matter fields (title, description, order, etc.) */
+  /** Your front-matter fields (title, description, order, etc.) */
   frontmatter: Record<string, any>;
 }
 
@@ -39,7 +40,28 @@ export interface NoteNode {
 }
 
 /**
- * Per‑folder manifest schema.
+ * Find the full path to a node in the tree
+ */
+export function findNodePath(
+  targetNode: NoteNode,
+  nodes: NoteNode[]
+): NoteNode[] | null {
+  for (const node of nodes) {
+    if (node.path === targetNode.path) {
+      return [node];
+    }
+
+    // Check children recursively
+    const childPath = findNodePath(targetNode, node.children);
+    if (childPath) {
+      return [node, ...childPath];
+    }
+  }
+  return null;
+}
+
+/**
+ * Per-folder manifest schema.
  * If you use `_meta.json` to explicitly list children/order.
  */
 interface FolderMeta {
@@ -62,7 +84,7 @@ function readFolderMeta(dirPath: string): FolderMeta | null {
   return JSON.parse(fs.readFileSync(metaFile, 'utf-8'));
 }
 
-/** Read just the front‑matter from an MDX file */
+/** Read just the front-matter from an MDX file */
 function readMDXFrontmatter(filePath: string): Record<string, any> {
   if (!fs.existsSync(filePath)) return {};
   const src = fs.readFileSync(filePath, 'utf-8');
@@ -86,15 +108,12 @@ export function getNotesTree(): NoteNode[] {
     const indexMDX = path.join(dirPath, 'index.mdx');
     const indexFm = readMDXFrontmatter(indexMDX);
 
-    // Check if we should create a node for this directory itself
-    let nodes: NoteNode[] = [];
-    
-    // Always create a node for the directory itself
+    // Always create a node for the directory itself (if index.mdx exists)
     const title = folderMeta?.title || indexFm.title || folderName;
     const description = folderMeta?.description || indexFm.description;
     const order = folderMeta?.order ?? indexFm.order ?? 0;
-    
-    // Add index node only if index.mdx exists
+
+    const nodes: NoteNode[] = [];
     if (fs.existsSync(indexMDX)) {
       nodes.push({
         slug: folderName,
@@ -107,8 +126,13 @@ export function getNotesTree(): NoteNode[] {
     }
 
     // Process child entries based on _meta.json (if exists) or directory contents
-    let childEntries: { slug: string; title?: string; order?: number; description?: string }[] = [];
-    
+    let childEntries: {
+      slug: string;
+      title?: string;
+      order?: number;
+      description?: string;
+    }[] = [];
+
     if (folderMeta?.children) {
       // Use explicit children from _meta.json
       childEntries = folderMeta.children;
@@ -116,15 +140,18 @@ export function getNotesTree(): NoteNode[] {
       // Scan directory for MDX files and subdirectories
       const entries = fs.readdirSync(dirPath, { withFileTypes: true });
       childEntries = entries
-        .filter(entry => 
-          (entry.isDirectory() && entry.name !== 'node_modules') || 
-          (entry.isFile() && entry.name.endsWith('.mdx') && entry.name !== 'index.mdx')
+        .filter(
+          (entry) =>
+            (entry.isDirectory() && entry.name !== 'node_modules') ||
+            (entry.isFile() &&
+              entry.name.endsWith('.mdx') &&
+              entry.name !== 'index.mdx')
         )
-        .map(entry => ({
+        .map((entry) => ({
           slug: entry.name.replace(/\.mdx$/, ''),
           // Will be populated later
           title: undefined,
-          order: undefined
+          order: undefined,
         }));
     }
 
@@ -132,11 +159,11 @@ export function getNotesTree(): NoteNode[] {
     for (const childEntry of childEntries) {
       const childSlug = childEntry.slug;
       const childPath = path.join(dirPath, childSlug);
-      
+
       if (fs.existsSync(childPath) && fs.lstatSync(childPath).isDirectory()) {
         // It's a directory, recurse
         const subNodes = buildNode(childPath, `${currentPath}`);
-        nodes = [...nodes, ...subNodes];
+        nodes.push(...subNodes);
       } else {
         // It's an MDX file (or should be)
         const mdxPath = `${childPath}.mdx`;
@@ -159,11 +186,10 @@ export function getNotesTree(): NoteNode[] {
 
   // Start building from root directories
   let allNodes: NoteNode[] = [];
-  
-  const rootEntries = fs.existsSync(NOTES_CONTENT_PATH) 
+  const rootEntries = fs.existsSync(NOTES_CONTENT_PATH)
     ? fs.readdirSync(NOTES_CONTENT_PATH, { withFileTypes: true })
     : [];
-    
+
   for (const entry of rootEntries) {
     if (entry.isDirectory()) {
       const dirPath = path.join(NOTES_CONTENT_PATH, entry.name);
@@ -184,24 +210,28 @@ export function getNotesTree(): NoteNode[] {
 /**
  * Get flat list of all available notes
  */
-export function getAllNotes(): { slug: string[]; frontmatter: Record<string, any> }[] {
+export function getAllNotes(): {
+  slug: string[];
+  frontmatter: Record<string, any>;
+}[] {
   const notes: { slug: string[]; frontmatter: Record<string, any> }[] = [];
 
   function traverse(dir: string, slugParts: string[] = []) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         // Skip non-content directories
         if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
         traverse(fullPath, [...slugParts, entry.name]);
       } else if (entry.name.endsWith('.mdx')) {
-        const slug = entry.name === 'index.mdx' 
-          ? slugParts 
-          : [...slugParts, entry.name.replace(/\.mdx$/, '')];
-        
+        const slug =
+          entry.name === 'index.mdx'
+            ? slugParts
+            : [...slugParts, entry.name.replace(/\.mdx$/, '')];
+
         const frontmatter = readMDXFrontmatter(fullPath);
         notes.push({ slug, frontmatter });
       }
@@ -222,77 +252,75 @@ export function organizeNotesTree(): NoteNode[] {
   // Get all flat notes
   const allNotes = getAllNotes();
   const tree: NoteNode[] = [];
-  
+
   // Create a map for quick access
   const nodeMap = new Map<string, NoteNode>();
-  
+
   // First pass: create all nodes
   for (const note of allNotes) {
     const { slug, frontmatter } = note;
-    
+
     if (slug.length === 0) continue; // Skip empty slugs
-    
+
     // Convert slug to path
-    const path = '/notes/' + slug.join('/');
-    
+    const nodePath = '/notes/' + slug.join('/');
+
     // Create node
     const node: NoteNode = {
       slug: slug[slug.length - 1],
       title: frontmatter.title || slug[slug.length - 1],
       order: frontmatter.order || 0,
       description: frontmatter.description,
-      path,
+      path: nodePath,
       children: [],
     };
-    
+
     // Add to map
-    nodeMap.set(path, node);
-    
-    // If it's a root node, add to tree
+    nodeMap.set(nodePath, node);
+
+    // If it's a root-level note, add to tree
     if (slug.length === 1) {
       tree.push(node);
     }
   }
-  
+
   // Second pass: build hierarchy
-  for (const [path, node] of nodeMap.entries()) {
-    // Skip root nodes
-    if (path.split('/').length <= 3) continue;
-    
-    // Get parent path
-    const parentPath = path.substring(0, path.lastIndexOf('/'));
+  for (const [nodePath, node] of nodeMap.entries()) {
+    // Skip root-level nodes
+    if (nodePath.split('/').length <= 3) continue;
+
+    // Determine parent path
+    const parentPath = nodePath.substring(0, nodePath.lastIndexOf('/'));
     const parent = nodeMap.get(parentPath);
-    
-    // Add to parent's children if parent exists
+
     if (parent) {
       parent.children.push(node);
     } else {
-      // Fall back to root if parent not found
+      // Fallback to root if no parent found
       tree.push(node);
     }
   }
-  
-  // Sort the tree
+
+  // Sort the tree recursively
   function sortNode(node: NoteNode): void {
     node.children.sort((a, b) => {
       if (a.order !== b.order) return a.order - b.order;
       return a.title.localeCompare(b.title);
     });
-    
     for (const child of node.children) {
       sortNode(child);
     }
   }
-  
+
   for (const node of tree) {
     sortNode(node);
   }
-  
+
   tree.sort((a, b) => {
     if (a.order !== b.order) return a.order - b.order;
     return a.title.localeCompare(b.title);
   });
-  
+
   return tree;
 }
 
@@ -304,51 +332,57 @@ export async function getNoteBySlug(
   slugArr: Slug
 ): Promise<LoadedNote | null> {
   // Normalize the slugs (handle spaces and URL encoding)
-  const normalizedSlugs = slugArr.map(slug => decodeURIComponent(slug));
-  
-  // Handle possible index case
+  const normalizedSlugs = slugArr.map((s) => decodeURIComponent(s));
+
   let filePath = '';
   let fileExists = false;
-  
+
   if (normalizedSlugs.length === 0) {
-    // This is the root index
+    // Root index case
     filePath = path.join(NOTES_CONTENT_PATH, 'index.mdx');
     fileExists = fs.existsSync(filePath);
   } else {
-    // Try multiple possible paths to find the file
-    
-    // 1. Check for a directory with an index.mdx file
-    filePath = path.join(NOTES_CONTENT_PATH, ...normalizedSlugs, 'index.mdx');
+    // 1. Check for directory with index.mdx
+    filePath = path.join(
+      NOTES_CONTENT_PATH,
+      ...normalizedSlugs,
+      'index.mdx'
+    );
     fileExists = fs.existsSync(filePath);
-    
-    // 2. If not found, check for an MDX file with the slug name
+
+    // 2. If not found, check for an MDX file
     if (!fileExists) {
       filePath = path.join(
-        NOTES_CONTENT_PATH, 
-        ...normalizedSlugs.slice(0, -1), 
+        NOTES_CONTENT_PATH,
+        ...normalizedSlugs.slice(0, -1),
         `${normalizedSlugs[normalizedSlugs.length - 1]}.mdx`
       );
       fileExists = fs.existsSync(filePath);
     }
-    
-    // 3. If still not found, try to find a matching file by listing directory contents
+
+    // 3. Fallback: search directory contents for case-insensitive match
     if (!fileExists && normalizedSlugs.length > 0) {
-      const dirPath = normalizedSlugs.length > 1 
-        ? path.join(NOTES_CONTENT_PATH, ...normalizedSlugs.slice(0, -1))
-        : NOTES_CONTENT_PATH;
-      
+      const dirPath =
+        normalizedSlugs.length > 1
+          ? path.join(
+              NOTES_CONTENT_PATH,
+              ...normalizedSlugs.slice(0, -1)
+            )
+          : NOTES_CONTENT_PATH;
+
       const lastSlug = normalizedSlugs[normalizedSlugs.length - 1];
-      
+
       if (fs.existsSync(dirPath)) {
         const files = fs.readdirSync(dirPath);
-        // Find files that match with or without .mdx extension
-        const exactMatch = files.find(f => f === `${lastSlug}.mdx` || f === lastSlug);
-        // Find case-insensitive matches
-        const caseInsensitiveMatch = files.find(
-          f => f.toLowerCase() === `${lastSlug.toLowerCase()}.mdx` || 
-               f.toLowerCase() === lastSlug.toLowerCase()
+        const exactMatch = files.find(
+          (f) => f === `${lastSlug}.mdx` || f === lastSlug
         );
-        
+        const caseInsensitiveMatch = files.find(
+          (f) =>
+            f.toLowerCase() === `${lastSlug.toLowerCase()}.mdx` ||
+            f.toLowerCase() === lastSlug.toLowerCase()
+        );
+
         if (exactMatch) {
           filePath = path.join(dirPath, exactMatch);
           fileExists = true;
@@ -359,7 +393,7 @@ export async function getNoteBySlug(
       }
     }
   }
-  
+
   if (!fileExists) {
     console.log(`File not found for slug: ${normalizedSlugs.join('/')}`);
     console.log(`Attempted path: ${filePath}`);
@@ -373,7 +407,7 @@ export async function getNoteBySlug(
   // Compile MDX
   const compiled = await compileMDX({
     source: mdxBody,
-    options: { parseFrontmatter: false }
+    options: { parseFrontmatter: false },
   });
 
   return {
@@ -381,36 +415,41 @@ export async function getNoteBySlug(
     frontmatter: {
       ...data,
       // Ensure title exists
-      title: data.title || slugArr[slugArr.length - 1] || 'Untitled'
-    }
+      title: data.title || slugArr[slugArr.length - 1] || 'Untitled',
+    },
   };
 }
 
 /**
- * Find a specific note in the tree by its slug
+ * Find a specific note in the tree by its slug array
  */
-export function findNoteInTree(tree: NoteNode[], slugPath: string[]): NoteNode | null {
+export function findNoteInTree(
+  tree: NoteNode[],
+  slugPath: string[]
+): NoteNode | null {
   if (slugPath.length === 0) return null;
-  
-  // Handle the case when slug contains spaces
-  const normalizeSlug = (slug: string) => slug.replace(/%20/g, ' ');
-  
-  // Find the root node
+
+  // Normalize slug to handle spaces/URL encoding
+  const normalizeSlug = (s: string) => s.replace(/%20/g, ' ');
+
+  // Find root node
   const rootSlug = normalizeSlug(slugPath[0]);
-  const rootNode = tree.find(node => node.slug === rootSlug || normalizeSlug(node.slug) === rootSlug);
-  
-  if (!rootNode || slugPath.length === 1) return rootNode || null;
-  
-  // Recursively search for the node
-  let currentNode = rootNode;
+  const rootNode =
+    tree.find(
+      (n) => n.slug === rootSlug || normalizeSlug(n.slug) === rootSlug
+    ) || null;
+  if (!rootNode || slugPath.length === 1) return rootNode;
+
+  // Traverse children
+  let currentNode: NoteNode = rootNode;
   for (let i = 1; i < slugPath.length; i++) {
-    const normalizedSearchSlug = normalizeSlug(slugPath[i]);
-    const childNode = currentNode.children.find(
-      node => node.slug === normalizedSearchSlug || normalizeSlug(node.slug) === normalizedSearchSlug
+    const seg = normalizeSlug(slugPath[i]);
+    const child = currentNode.children.find(
+      (n) => n.slug === seg || normalizeSlug(n.slug) === seg
     );
-    if (!childNode) return null;
-    currentNode = childNode;
+    if (!child) return null;
+    currentNode = child;
   }
-  
+
   return currentNode;
 }

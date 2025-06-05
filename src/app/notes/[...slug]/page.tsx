@@ -1,7 +1,15 @@
+// src/app/notes/[...slug]/page.tsx
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getNoteBySlug, findNoteInTree, organizeNotesTree } from '@/utils/notes-mdx';
+import {
+  getNoteBySlug,
+  findNoteInTree,
+  organizeNotesTree,
+  findNodePath,
+  type NoteNode,
+} from '@/utils/notes-mdx';
 import type { Metadata } from 'next';
+import Breadcrumb from '@/components/notes/BreadCrumb';
 
 interface NotePageProps {
   params: {
@@ -9,11 +17,14 @@ interface NotePageProps {
   };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string[] } }): Promise<Metadata> {
-  // Safely access params
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string[] };
+}): Promise<Metadata> {
   const slug = params?.slug || [];
   const note = await getNoteBySlug(slug);
-  
+
   if (!note) {
     return {
       title: 'Note Not Found',
@@ -22,15 +33,20 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
 
   return {
     title: `${note.frontmatter.title} | Notes`,
-    description: note.frontmatter.description || `Documentation for ${note.frontmatter.title}`,
+    description:
+      note.frontmatter.description ||
+      `Documentation for ${note.frontmatter.title}`,
   };
 }
 
-export default async function NotePage({ params }: { params: { slug: string[] } }) {
-  // Safely access params
+export default async function NotePage({
+  params,
+}: {
+  params: { slug: string[] };
+}) {
   const slug = params?.slug || [];
   const note = await getNoteBySlug(slug);
-  
+
   if (!note) {
     return notFound();
   }
@@ -39,31 +55,50 @@ export default async function NotePage({ params }: { params: { slug: string[] } 
   const tree = organizeNotesTree();
   const currentNote = findNoteInTree(tree, slug);
 
+  // Build breadcrumb items using the imported findNodePath helper
+  const breadcrumbItems: NoteNode[] = [];
+  if (currentNote) {
+    const fullPath = findNodePath(currentNote, tree);
+    if (fullPath) {
+      breadcrumbItems.push(...fullPath);
+    }
+  }
+
   return (
     <>
+      {/* Breadcrumb navigation */}
+      <Breadcrumb items={breadcrumbItems} />
+
+      {/* Page header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{frontmatter.title}</h1>
         {frontmatter.description && (
-          <p className="text-xl text-gray-600 dark:text-gray-400">{frontmatter.description}</p>
+          <p className="text-xl text-gray-600 dark:text-gray-400">
+            {frontmatter.description}
+          </p>
         )}
       </div>
 
-      <div className="mdx-content">
-        {content}
-      </div>
+      {/* MDX Content */}
+      <div className="mdx-content">{content}</div>
 
-      {/* Optional: Add navigation between articles */}
+      {/* Next Topics (children) */}
       {currentNote && currentNote.children.length > 0 && (
         <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-800">
           <h3 className="text-lg font-semibold mb-4">Next Topics</h3>
           <ul className="space-y-2">
-            {currentNote.children.map(child => (
+            {currentNote.children.map((child) => (
               <li key={child.path}>
-                <a href={child.path} className="text-blue-600 dark:text-blue-400 hover:underline">
+                <a
+                  href={child.path}
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
                   {child.title}
                 </a>
                 {child.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{child.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {child.description}
+                  </p>
                 )}
               </li>
             ))}

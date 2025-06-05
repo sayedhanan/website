@@ -1,7 +1,7 @@
-// src/components/NotesNav.tsx
+// src/components/notes/NotesNav.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NoteNode } from '@/utils/notes-mdx';
@@ -17,10 +17,7 @@ export function NotesNav({ tree, className = '' }: NotesNavProps) {
 
   return (
     <div className={`${className} w-full flex flex-col`}>
-      {/* Heading “Documentation” in primary text color */}
-      <h3 className="font-semibold text-lg mb-4 text-[var(--color-primary-text)]">
-        Documentation
-      </h3>
+      <h3 className="font-semibold text-lg mb-4">Documentation</h3>
       <div className="space-y-1">
         <NavTree nodes={tree} pathname={pathname} level={0} />
       </div>
@@ -52,10 +49,18 @@ interface NavItemProps {
 
 function NavItem({ node, pathname, level }: NavItemProps) {
   const isActive = pathname === node.path;
-  const isChildActive = !isActive && pathname.startsWith(node.path);
+  const isChildActive = pathname.startsWith(`${node.path}/`);
+  const isAncestorActive = pathname.startsWith(node.path) && !isActive;
 
-  // Automatically expand if this item or any child is active
+  // Initialize expanded state based on active or descendant status
   const [isExpanded, setIsExpanded] = useState(isActive || isChildActive);
+
+  // Expand whenever this node or a child becomes active
+  useEffect(() => {
+    if (isActive || isChildActive) {
+      setIsExpanded(true);
+    }
+  }, [isActive, isChildActive]);
 
   const hasChildren = node.children.length > 0;
 
@@ -70,18 +75,15 @@ function NavItem({ node, pathname, level }: NavItemProps) {
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="
-              mr-1 p-1 rounded-sm
-              hover:bg-[var(--color-border)]
-              transition-colors
-              focus:outline-none
-            "
+            className={`mr-1 p-1 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none ${
+              isAncestorActive ? 'text-blue-500 dark:text-blue-400' : ''
+            }`}
             aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
           >
             {isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-[var(--color-primary-text)]" />
+              <ChevronDown className="h-4 w-4" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-[var(--color-primary-text)]" />
+              <ChevronRight className="h-4 w-4" />
             )}
           </button>
         )}
@@ -90,10 +92,12 @@ function NavItem({ node, pathname, level }: NavItemProps) {
 
         <Link
           href={node.path}
-          className={`flex-grow py-1 px-2 text-sm rounded transition-colors ${
+          className={`flex-grow py-1 px-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
             isActive
-              ? 'bg-[var(--color-info-bg)] text-[var(--color-info)] font-medium'
-              : 'text-[var(--color-secondary-text)] hover:bg-[var(--color-border)]'
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium'
+              : isAncestorActive
+              ? 'text-blue-500 dark:text-blue-400 font-medium'
+              : 'text-gray-700 dark:text-gray-300'
           }`}
         >
           {node.title}
