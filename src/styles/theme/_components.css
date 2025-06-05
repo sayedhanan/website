@@ -1,136 +1,110 @@
-@layer components {
+/* Component layer 
+   - We group all component‐specific classes (buttons, alerts, cards) under @layer components. */
 
-  /* Base button styles */
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+   @layer components {
+    /* --------------------------------------
+       Buttons
+       - .btn: base styles using @apply for common Tailwind utilities
+       - Variants: primary, secondary, outline, ghost, disabled
+       - Updated “shadow-sm” → “shadow-xs” to match v4 naming
+       -------------------------------------- */
+    .btn {
+      @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2;
+      /* 
+        - “focus:outline-hidden” replaces the old “focus:outline-none”
+        - In v4, `outline-hidden` hides the default outline; if you actually want no outline, you can use `focus:outline-none`. 
+        - Here we assume you intend to hide the native outline in favor of a ring.
+        */
+    }
+  
+    /* Primary variant (accent‐filled) */
+    .btn-primary {
+      @apply bg-[var(--color-accent)] text-[var(--color-surface)];
+      /* :hover behavior can be moved to a utility class or inline, but we keep it here */
+    }
+    .btn-primary:hover {
+      @apply bg-[var(--color-accent-hover)];
+    }
+  
+    /* Secondary variant (surface‐filled) */
+    .btn-secondary {
+      @apply bg-[var(--color-surface)] text-[var(--color-primary-text)] border border-[var(--color-border)];
+    }
+    .btn-secondary:hover {
+      @apply bg-[var(--color-background)];
+    }
+  
+    /* Outline variant */
+    .btn-outline {
+      @apply bg-transparent text-[var(--color-accent)] border border-[var(--color-accent)];
+    }
+    .btn-outline:hover {
+      @apply bg-[var(--color-accent)] text-[var(--color-surface)];
+    }
+  
+    /* Ghost variant (text‐only) */
+    .btn-ghost {
+      @apply bg-transparent text-[var(--color-primary-text)];
+    }
+    .btn-ghost:hover {
+      @apply bg-[var(--color-border)];
+    }
+  
+    /* Disabled state */
+    .btn-disabled {
+      @apply bg-[var(--color-border)] text-[var(--color-secondary-text)] cursor-not-allowed opacity-60;
+    }
+  
+    /* --------------------------------------
+       Alerts
+       - Shared “.alert” base, then semantic variants
+       -------------------------------------- */
+    .alert {
+      @apply flex items-start gap-3 p-4 rounded-md border;
+    }
+    .alert-success {
+      @apply bg-[var(--color-success-bg)] text-[var(--color-success)] border-[var(--color-success)];
+    }
+    .alert-error {
+      @apply bg-[var(--color-error-bg)] text-[var(--color-error)] border-[var(--color-error)];
+    }
+    .alert-warning {
+      @apply bg-[var(--color-warning-bg)] text-[var(--color-warning)] border-[var(--color-warning)];
+    }
+    .alert-info {
+      @apply bg-[var(--color-info-bg)] text-[var(--color-info)] border-[var(--color-info)];
+    }
+    .alert-icon {
+      @apply flex-shrink-0 w-6 h-6;
+    }
+    .alert-content {
+      @apply flex-1;
+    }
+    .alert-close {
+      @apply ml-4 rounded focus:outline-hidden focus:ring-2 focus:ring-offset-2 text-[var(--color-secondary-text)];
+    }
+  
+    /* --------------------------------------
+       Article Card
+       - Update “shadow-sm” → “shadow-xs”
+       -------------------------------------- */
+    .card {
+      @apply bg-[var(--color-surface)]
+             border border-[var(--color-border)]
+             rounded-lg shadow-xs         /* v4 uses shadow-xs instead of shadow-sm */
+             p-6 flex flex-col justify-between;
+    }
+    .card-title {
+      @apply text-xl font-semibold text-[var(--color-primary-text)] mb-2;
+    }
+    .card-excerpt {
+      @apply text-sm text-[var(--color-secondary-text)] line-clamp-3 mb-4;
+    }
+    .card-meta {
+      @apply flex items-center justify-between text-xs text-[var(--color-secondary-text)];
+    }
+    .card-link {
+      @apply text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] font-medium;
+    }
   }
-
-  /* Primary variant (accent-filled) */
-  .btn-primary {
-    background-color: var(--color-accent);
-    color: var(--color-surface);
-  }
-
-  .btn-primary:hover {
-    background-color: var(--color-accent-hover);
-  }
-
-  /* Secondary variant (surface-filled) */
-  .btn-secondary {
-    background-color: var(--color-surface);
-    color: var(--color-primary-text);
-    border: 1px solid var(--color-border);
-  }
-
-  .btn-secondary:hover {
-    background-color: var(--color-background);
-  }
-
-  /* Outline variant */
-  .btn-outline {
-    background-color: transparent;
-    color: var(--color-accent);
-    border: 1px solid var(--color-accent);
-  }
-
-  .btn-outline:hover {
-    background-color: var(--color-accent);
-    color: var(--color-surface);
-  }
-
-  /* Ghost variant (text-only) */
-  .btn-ghost {
-    background-color: transparent;
-    color: var(--color-primary-text);
-  }
-
-  .btn-ghost:hover {
-    background-color: var(--color-border);
-  }
-
-  /* Disabled state */
-  .btn-disabled {
-    background-color: var(--color-border);
-    color: var(--color-secondary-text);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-}
-
-
-/* Alerts */
-@layer components {
-
-  /* Base Alert */
-  .alert {
-    @apply flex items-start gap-3 p-4 rounded-md border;
-  }
-
-  /* Success variant */
-  .alert-success {
-    background-color: var(--color-success-bg);
-    color: var(--color-success);
-    border-color: var(--color-success);
-  }
-
-  /* Error variant */
-  .alert-error {
-    background-color: var(--color-error-bg);
-    color: var(--color-error);
-    border-color: var(--color-error);
-  }
-
-  /* Warning variant */
-  .alert-warning {
-    background-color: var(--color-warning-bg);
-    color: var(--color-warning);
-    border-color: var(--color-warning);
-  }
-
-  /* Info variant */
-  .alert-info {
-    background-color: var(--color-info-bg);
-    color: var(--color-info);
-    border-color: var(--color-info);
-  }
-
-  /* Icon container */
-  .alert-icon {
-    @apply flex-shrink-0 w-6 h-6;
-  }
-
-  /* Content */
-  .alert-content {
-    @apply flex-1;
-  }
-
-  /* Close button (optional) */
-  .alert-close {
-    @apply ml-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2;
-    color: var(--color-secondary-text);
-  }
-}
-
-@layer components {
-
-  /* Article Card component */
-  .card {
-    @apply bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-sm p-6 flex flex-col justify-between;
-  }
-
-  .card-title {
-    @apply text-xl font-semibold text-[var(--color-primary-text)] mb-2;
-  }
-
-  .card-excerpt {
-    @apply text-sm text-[var(--color-secondary-text)] line-clamp-3 mb-4;
-  }
-
-  .card-meta {
-    @apply flex items-center justify-between text-xs text-[var(--color-secondary-text)];
-  }
-
-  .card-link {
-    @apply text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] font-medium;
-  }
-}
+  

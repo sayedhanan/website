@@ -1,4 +1,3 @@
-// src/components/NotesCarouselClient.tsx
 'use client';
 
 import React from 'react';
@@ -25,7 +24,10 @@ interface Props {
 export default function NotesCarouselClient({ notes }: Props) {
   return (
     <section className="my-8">
-      <h2 className="text-2xl font-bold mb-4">Latest Notes</h2>
+      <h2 className="text-2xl font-bold text-[var(--color-primary-text)] mb-4">
+        Latest Notes
+      </h2>
+
       <Swiper
         modules={[Navigation, Pagination, A11y]}
         spaceBetween={20}
@@ -38,7 +40,7 @@ export default function NotesCarouselClient({ notes }: Props) {
           1024: { slidesPerView: 3 },
         }}
       >
-        {notes.map(note => (
+        {notes.map((note) => (
           <SwiperSlide key={note.href}>
             <ArticleCard
               href={note.href}

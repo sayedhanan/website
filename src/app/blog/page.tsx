@@ -18,9 +18,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <section className="section-wrapper section-spacing">
       <h1 className="text-3xl font-bold mb-6">Blog</h1>
-      
+
       <CategoryNav categories={categories} />
-      
+
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
           <ArticleCard
@@ -34,7 +34,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           />
         ))}
       </div>
-      
+
       <Pagination currentPage={currentPage} totalPages={totalPages} />
     </section>
   );

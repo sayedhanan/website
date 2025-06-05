@@ -13,7 +13,6 @@
 
 /* 5. Base layer */
 @layer base {
-
   *,
   *::before,
   *::after {
@@ -25,28 +24,30 @@
     padding: 0;
   }
 
-
   /* Remove hover-opacity on the built-in copy button */
   [data-rehype-pretty-code-copy] {
     opacity: 1 !important;
     cursor: pointer;
   }
 
-  /* Success feedback color (Tailwind green-400 → #4ade80) */
+  /* Success feedback color → use token instead of #4ade80 */
   [data-rehype-pretty-code-copy][data-copied] {
-    color: #4ade80 !important;
+    color: var(--color-success) !important;
   }
 
-  /* Code block styling */
+  /* Code-block styling: always dark (#1e1e1e), even in light mode */
   [data-rehype-pretty-code-fragment] pre {
     overflow-x: auto;
     padding: 1rem;
+    background-color: #1e1e1e !important; /* locked to dark */
+    border-radius: 0.5rem;
   }
 
   [data-line] {
     padding-inline: 1rem;
   }
 
+  /* Highlighted-line overlay (semi-transparent on top of dark) */
   [data-highlighted-line] {
     background: hsl(210 20% 25% / 0.3);
   }
@@ -55,10 +56,9 @@
     /* Optional: title styles */
     font-weight: 600;
     margin-bottom: 0.5rem;
+    color: var(--color-primary-text);
   }
 }
-
-
 
 /* 6. Utility layer */
 @layer utilities {
@@ -66,10 +66,12 @@
     color: inherit;
   }
 
-  .prose :where(h1, h2, h3, h4, h5, h6,
+  .prose :where(
+    h1, h2, h3, h4, h5, h6,
     p, blockquote, strong, code, pre, a,
     ol>li::before, ul>li::before,
-    thead th, tbody td) {
+    thead th, tbody td
+  ) {
     color: inherit;
   }
 
@@ -81,75 +83,51 @@
     border-color: currentColor;
   }
 
+  /* Code blocks should stay dark—even in light mode—so we no longer override them under “.dark” */
   .prose pre {
     padding: 1rem;
     border-radius: 0.5rem;
     overflow-x: auto;
-    background-color: #f6f8fa !important;
-  }
-
-  .dark .prose pre {
-    background-color: #1e1e1e !important;
+    background-color: #1e1e1e !important; /* locked to dark */
   }
 
   .prose code {
     font-family: ui-monospace, monospace;
     font-size: 0.875rem;
+    color: var(--color-surface); /* ensure code text is readable on dark background */
   }
 
+  /* Scrollbar styling: still tokenized so light/dark tokens apply to track/thumb as before */
   .prose pre::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   .prose pre::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--color-border);
     border-radius: 0 0 0.5rem 0.5rem;
   }
 
   .prose pre::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--color-secondary-text);
     border-radius: 10px;
-    border: 2px solid #f1f1f1;
+    border: 2px solid var(--color-border);
   }
 
   .dark .prose pre::-webkit-scrollbar-track {
-    background: #2a2f35;
+    background: var(--color-border);
   }
 
   .dark .prose pre::-webkit-scrollbar-thumb {
-    background: #555;
-    border: 2px solid #2a2f35;
+    background: var(--color-secondary-text);
+    border: 2px solid var(--color-border);
   }
 }
 
 
-/* Terminal CSS */
-/* Add to globals.css */
-.command {
-  color: #79c0ff;
-  font-weight: 500;
-}
 
-.highlight {
-  color: #ff7b72;
-  font-weight: 500;
-}
 
-.success {
-  color: #7ee787;
-}
-
-.error {
-  color: #ff7b72;
-}
-
-.output {
-  color: #c9d1d9;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-}
-
-.prompt {
-  color: #7ee787;
+article h2,
+article h3 {
+  scroll-margin-top: 100px; /* match your sticky header height */
 }

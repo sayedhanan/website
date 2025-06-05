@@ -1,0 +1,29 @@
+/* * Terminal CSS */ 
+/* Add to globals.css */
+.command {
+  color: #79c0ff;
+  font-weight: 500;
+}
+
+.highlight {
+  color: #ff7b72;
+  font-weight: 500;
+}
+
+.success {
+  color: #7ee787;
+}
+
+.error {
+  color: #ff7b72;
+}
+
+.output {
+  color: #c9d1d9;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.prompt {
+  color: #7ee787;
+}

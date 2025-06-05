@@ -1,11 +1,16 @@
+/* 1. Base theme styles 
+   - We set the root background/color using our variables declared in _colors.css
+   - Everything else (e.g. typography) was done in _typography.css
+*/
 @layer base {
-    :root {
-      background: var(--color-background);
-      color: var(--color-primary-text);
-    }
-  
-    .surface {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-    }
+  :root {
+    background: var(--color-background);
+    color: var(--color-primary-text);
   }
+
+  /* A generic “.surface” utility (e.g. cards, modals, etc.) */
+  .surface {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+}

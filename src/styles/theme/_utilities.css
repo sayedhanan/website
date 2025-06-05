@@ -1,38 +1,54 @@
-@layer utilities {
-  /* Text & border utilities */
-  .text-secondary {
-    color: var(--color-secondary-text);
-  }
+/* 1. Utility layer
+   - We declare project-specific utilities that aren’t built into Tailwind.
+   - For anything that can use default Tailwind classes (e.g., text-align, margin), prefer those instead of inventing new utilities. */
 
-  .border-divider {
-    border-color: var(--color-border);
+   @layer utilities {
+    /* Text & border utilities for semantic naming */
+    .text-secondary {
+      color: var(--color-secondary-text);
+    }
+    .border-divider {
+      border-color: var(--color-border);
+    }
+  
+    /* --------------------------------------
+       Horizontal wrapper: fixed max width + responsive gutters
+       - .section-wrapper is a custom utility for consistent page width and padding
+       - Instead of `max-inline-size`, you could also use Tailwind’s `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`,
+         but this captures that pattern in a single class.
+       -------------------------------------- */
+    .section-wrapper {
+      max-inline-size: theme("maxWidth.7xl"); /* cap at 80rem (1280px) as Tailwind’s 7xl */
+      margin-inline: auto;                    /* center horizontally */
+      padding-inline: 1rem;                   /* 16px default (matches px-4) */
+    }
+    @screen sm {
+      .section-wrapper {
+        padding-inline: 1.5rem;               /* 24px at sm+ (px-6) */
+      }
+    }
+    @screen lg {
+      .section-wrapper {
+        padding-inline: 2rem;                 /* 32px at lg+ (px-8) */
+      }
+    }
+  
+    /* --------------------------------------
+       Vertical rhythm: consistent section spacing
+       - .section-spacing replicates “py-12 / py-16 / py-20” at different breakpoints
+       -------------------------------------- */
+    .section-spacing {
+      padding-block: 3rem;                    /* 48px = py-12 */
+    }
+    @screen md {
+      .section-spacing {
+        padding-block: 4rem;                  /* 64px = py-16 */
+      }
+    }
+    @screen lg {
+      .section-spacing {
+        padding-block: 5rem;                  /* 80px = py-20 */
+      }
+    }
   }
-
-  /* Horizontal wrapper: fixed max width + responsive gutters */
-  .section-wrapper {
-    max-inline-size: theme("maxWidth.7xl"); /* cap at 6xl */                    /* :contentReference[oaicite:5]{index=5} */
-    margin-inline: auto;                                                        /* center content :contentReference[oaicite:6]{index=6} */
-    padding-inline: 1rem;                                                       /* 16px default, matches px-4 */ 
-  }
-  @screen sm {
-    .section-wrapper { padding-inline: 1.5rem; }                               /* 24px at sm+ :contentReference[oaicite:7]{index=7} */
-  }
-  @screen lg {
-    .section-wrapper { padding-inline: 2rem; }                                 /* 32px at lg+ :contentReference[oaicite:8]{index=8} */
-  }
-
-  /* Vertical rhythm: consistent section spacing */
-  .section-spacing {
-    padding-block: 3rem;                                                        /* 48px = py-12 :contentReference[oaicite:9]{index=9} */
-  }
-  @screen md {
-    .section-spacing { padding-block: 4rem; }                                  /* 64px = py-16 :contentReference[oaicite:10]{index=10} */
-  }
-  @screen lg {
-    .section-spacing { padding-block: 5rem; }                                  /* 80px = py-20 :contentReference[oaicite:11]{index=11} */
-  }
-}
-
-
-
-
+  

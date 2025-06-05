@@ -1,9 +1,9 @@
-/* @import "tailwindcss"; */
-
-
-/* 1. Import each theme partial in order */
-@import "./theme/_colors.css";
-@import "./theme/_typography.css";
-@import "./theme/_base.css";
-@import "./theme/_components.css";
-@import "./theme/_utilities.css";
+/* Theme entry point
+   - We import each theme partial exactly once.
+   - None of these partials should re-import Tailwind; they only need to declare @theme or @layer. */
+   @import "./theme/_colors.css";
+   @import "./theme/_typography.css";
+   @import "./theme/_base.css";
+   @import "./theme/_components.css";
+   @import "./theme/_utilities.css";
+   

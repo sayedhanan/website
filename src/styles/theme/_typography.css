@@ -1,48 +1,48 @@
-/* Typography design tokens */
-@theme {
-  --font-heading: system-ui, sans-serif;
-  --font-body: system-ui, sans-serif;
-
-  /* Font-size scale */
-  --typography-xs: 0.75rem;
-  /* 12px */
-  --typography-sm: 0.875rem;
-  /* 14px */
-  --typography-base: 1rem;
-  /* 16px */
-  --typography-lg: 1.125rem;
-  /* 18px */
-  --typography-xl: 1.25rem;
-  /* 20px */
-
-  /* Line-height scale */
-  --line-height-normal: 1.5;
-  --line-height-tight: 1.25;
-
-
-}
-
-/* Base element styles */
-@layer base {
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    color: var(--color-primary-text);
-  }
-
-  body {
-    font-family: var(--font-body);
-    color: var(--color-primary-text);
-    line-height: var(--line-height-normal);
-  }
-
-  p {
-    color: var(--color-secondary-text);
-  }
-}
+/* 1. Define typography tokens via @theme
+   - We declare font‐family names, size scales, and line‐height scales
+   - Tailwind will generate utilities like text-[var(--typography-lg)] if needed,
+     though in most cases you’ll still rely on the native `text-lg`, etc. */
+     @theme {
+      --font-heading:        system-ui, sans-serif;
+      --font-body:           system-ui, sans-serif;
+    
+      /* Font‐size scale (for custom utilities, if used) */
+      --typography-xs:       0.75rem;  /* 12px */
+      --typography-sm:       0.875rem; /* 14px */
+      --typography-base:     1rem;     /* 16px */
+      --typography-lg:       1.125rem; /* 18px */
+      --typography-xl:       1.25rem;  /* 20px */
+    
+      /* Line‐height scale */
+      --line-height-normal:  1.5;
+      --line-height-tight:   1.25;
+    }
+    
+    /* 2. Base element styles
+       - We still need these if we want consistent defaults on headings/body
+       - Uses the CSS variables declared above */
+    @layer base {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        color: var(--color-primary-text);
+        line-height: var(--line-height-tight);
+      }
+    
+      body {
+        font-family: var(--font-body);
+        color: var(--color-primary-text);
+        line-height: var(--line-height-normal);
+      }
+    
+      p {
+        color: var(--color-secondary-text);
+        margin-bottom: 1rem; /* Provide default paragraph spacing */
+      }
+    }
+    

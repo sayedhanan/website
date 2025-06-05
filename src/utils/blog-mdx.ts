@@ -1,4 +1,4 @@
-// src/utils/blog-mdx.ts - Add pagination utility functions
+// src/utils/blog-mdx.ts
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -18,6 +18,12 @@ const theme = JSON.parse(
 // Number of posts to show per page
 export const POSTS_PER_PAGE = 6;
 
+export interface TOCItem {
+  id: string;
+  title: string;
+  level: 2 | 3;
+}
+
 export interface Post {
   slug: string;
   title: string;
@@ -28,12 +34,38 @@ export interface Post {
   categories: string[];
   tags: string[];
   draft: boolean;
+  toc: TOCItem[]; // ← Added TOC array
 }
 
 export interface PaginatedPosts {
   posts: Post[];
   currentPage: number;
   totalPages: number;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Extract all “## Heading” (level 2) and “### Heading” (level 3) lines from
+// the raw MDX source. Generate a slug‐style `id` and return {id, title, level}.
+// ─────────────────────────────────────────────────────────────────────────────
+function extractTOCFromMdx(source: string): TOCItem[] {
+  const lines = source.split('\n');
+  const toc: TOCItem[] = [];
+
+  for (const line of lines) {
+    // Match lines that start with "## " or "### "
+    const match = line.match(/^(#{2,3})\s+(.*)$/);
+    if (match) {
+      const level = match[1].length as 2 | 3;
+      const rawText = match[2].trim();
+      const id = rawText
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
+      toc.push({ id, title: rawText, level });
+    }
+  }
+
+  return toc;
 }
 
 export function getPostSlugs(): string[] {
@@ -47,6 +79,9 @@ export async function getPostBySlug(slug: string): Promise<Post> {
   const fullPath = path.join(postsDir, `${slug}.mdx`);
   const raw = fs.readFileSync(fullPath, 'utf-8');
   const { data, content: mdxSource } = matter(raw);
+
+  // Generate TOC before MDX compilation
+  const toc = extractTOCFromMdx(mdxSource);
 
   const options = {
     theme,
@@ -83,39 +118,36 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     slug,
     title: data.title.toString(),
     date: data.date.toString(),
-    readingTime:
-      data.readingTime?.toString() || readingTime(mdxSource).text,
+    readingTime: data.readingTime?.toString() || readingTime(mdxSource).text,
     abstract,
     content,
     categories: data.categories || [],
     tags: data.tags || [],
-    draft: data.draft === true
+    draft: data.draft === true,
+    toc, // ← Return the TOC items here
   };
 }
 
 export async function getAllPosts(includesDrafts = false): Promise<Post[]> {
   const slugs = getPostSlugs();
-  const posts = await Promise.all(slugs.map(async (slug) => getPostBySlug(slug)));
+  const posts = await Promise.all(slugs.map((slug) => getPostBySlug(slug)));
 
-  // Filter out drafts if not explicitly included
-  const filteredPosts = includesDrafts 
-    ? posts 
-    : posts.filter(post => !post.draft);
+  const filteredPosts = includesDrafts ? posts : posts.filter((post) => !post.draft);
 
-  // Sort by date (newest first)
-  return filteredPosts.sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
+  return filteredPosts.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
 
-export async function getPaginatedPosts(page = 1, includesDrafts = false): Promise<PaginatedPosts> {
+export async function getPaginatedPosts(
+  page = 1,
+  includesDrafts = false
+): Promise<PaginatedPosts> {
   const allPosts = await getAllPosts(includesDrafts);
   const totalPosts = allPosts.length;
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-  
-  // Ensure page is within valid range
+
   const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const posts = allPosts.slice(startIndex, endIndex);
@@ -130,35 +162,36 @@ export async function getPaginatedPosts(page = 1, includesDrafts = false): Promi
 export async function getAllCategories(): Promise<string[]> {
   const posts = await getAllPosts();
   const categoriesSet = new Set<string>();
-  
-  posts.forEach(post => {
+
+  posts.forEach((post) => {
     if (post.categories && Array.isArray(post.categories)) {
-      post.categories.forEach(category => categoriesSet.add(category));
+      post.categories.forEach((category) => categoriesSet.add(category));
     }
   });
-  
+
   return Array.from(categoriesSet);
 }
 
-export async function getPostsByCategory(category: string, includesDrafts = false): Promise<Post[]> {
+export async function getPostsByCategory(
+  category: string,
+  includesDrafts = false
+): Promise<Post[]> {
   const allPosts = await getAllPosts(includesDrafts);
-  return allPosts.filter(post => 
-    post.categories && post.categories.includes(category)
+  return allPosts.filter(
+    (post) => post.categories && post.categories.includes(category)
   );
 }
 
 export async function getPaginatedPostsByCategory(
-  category: string, 
-  page = 1, 
+  category: string,
+  page = 1,
   includesDrafts = false
 ): Promise<PaginatedPosts & { category: string }> {
   const allCategoryPosts = await getPostsByCategory(category, includesDrafts);
   const totalPosts = allCategoryPosts.length;
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-  
-  // Ensure page is within valid range
+
   const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const posts = allCategoryPosts.slice(startIndex, endIndex);
@@ -174,35 +207,34 @@ export async function getPaginatedPostsByCategory(
 export async function getAllTags(): Promise<string[]> {
   const posts = await getAllPosts();
   const tagsSet = new Set<string>();
-  
-  posts.forEach(post => {
+
+  posts.forEach((post) => {
     if (post.tags && Array.isArray(post.tags)) {
-      post.tags.forEach(tag => tagsSet.add(tag));
+      post.tags.forEach((tag) => tagsSet.add(tag));
     }
   });
-  
+
   return Array.from(tagsSet);
 }
 
-export async function getPostsByTag(tag: string, includesDrafts = false): Promise<Post[]> {
+export async function getPostsByTag(
+  tag: string,
+  includesDrafts = false
+): Promise<Post[]> {
   const allPosts = await getAllPosts(includesDrafts);
-  return allPosts.filter(post => 
-    post.tags && post.tags.includes(tag)
-  );
+  return allPosts.filter((post) => post.tags && post.tags.includes(tag));
 }
 
 export async function getPaginatedPostsByTag(
-  tag: string, 
-  page = 1, 
+  tag: string,
+  page = 1,
   includesDrafts = false
 ): Promise<PaginatedPosts & { tag: string }> {
   const allTagPosts = await getPostsByTag(tag, includesDrafts);
   const totalPosts = allTagPosts.length;
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-  
-  // Ensure page is within valid range
+
   const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const posts = allTagPosts.slice(startIndex, endIndex);
