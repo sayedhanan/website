@@ -1,9 +1,0 @@
-/* @import "tailwindcss"; */
-
-
-/* 1. Import each theme partial in order */
-@import "./theme/_colors.css";
-@import "./theme/_typography.css";
-@import "./theme/_base.css";
-@import "./theme/_components.css";
-@import "./theme/_utilities.css";
