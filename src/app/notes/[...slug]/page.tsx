@@ -71,9 +71,14 @@ export default async function NotePage({
 
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{frontmatter.title}</h1>
+        <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-primary-text)' }}>
+          {frontmatter.title}
+        </h1>
         {frontmatter.description && (
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p
+            className="text-xl"
+            style={{ color: 'var(--color-secondary-text)' }}
+          >
             {frontmatter.description}
           </p>
         )}
@@ -84,19 +89,31 @@ export default async function NotePage({
 
       {/* Next Topics (children) */}
       {currentNote && currentNote.children.length > 0 && (
-        <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-800">
-          <h3 className="text-lg font-semibold mb-4">Next Topics</h3>
+        <div
+          className="mt-12 pt-6"
+          style={{ borderTop: '1px solid var(--color-border)' }}
+        >
+          <h3
+            className="text-lg font-semibold mb-4"
+            style={{ color: 'var(--color-primary-text)' }}
+          >
+            Next Topics
+          </h3>
           <ul className="space-y-2">
             {currentNote.children.map((child) => (
               <li key={child.path}>
                 <a
                   href={child.path}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className="hover:underline"
+                  style={{ color: 'var(--color-accent)' }}
                 >
                   {child.title}
                 </a>
                 {child.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p
+                    className="text-sm"
+                    style={{ color: 'var(--color-secondary-text)' }}
+                  >
                     {child.description}
                   </p>
                 )}

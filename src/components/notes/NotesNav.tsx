@@ -17,7 +17,9 @@ export function NotesNav({ tree, className = '' }: NotesNavProps) {
 
   return (
     <div className={`${className} w-full flex flex-col`}>
-      <h3 className="font-semibold text-lg mb-4">Documentation</h3>
+      <h4 className="text-sm font-semibold mb-3 pb-1 border-b border-[var(--color-border)]">
+        Documentation
+      </h4>
       <div className="space-y-1">
         <NavTree nodes={tree} pathname={pathname} level={0} />
       </div>
@@ -75,8 +77,8 @@ function NavItem({ node, pathname, level }: NavItemProps) {
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className={`mr-1 p-1 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none ${
-              isAncestorActive ? 'text-blue-500 dark:text-blue-400' : ''
+            className={`mr-1 p-1 rounded-sm hover:bg-[var(--color-accent)]/5 transition-colors focus:outline-none ${
+              isAncestorActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-secondary-text)]'
             }`}
             aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
           >
@@ -90,18 +92,36 @@ function NavItem({ node, pathname, level }: NavItemProps) {
 
         {!hasChildren && <div className="w-6" />}
 
-        <Link
-          href={node.path}
-          className={`flex-grow py-1 px-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
-            isActive
-              ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium'
-              : isAncestorActive
-              ? 'text-blue-500 dark:text-blue-400 font-medium'
-              : 'text-gray-700 dark:text-gray-300'
-          }`}
+        <div
+          className={`
+            flex-grow transition-all duration-200 ease-in-out
+            ${level === 2 ? "font-medium" : "font-normal"}
+            ${level === 3 ? "pl-3" : ""}
+            ${level === 4 ? "pl-6" : ""}
+            ${level >= 5 ? "pl-9" : ""}
+            border-l-2 transition-colors
+            ${isActive 
+              ? "border-[var(--color-accent)] text-[var(--color-accent)]" 
+              : "border-transparent hover:border-[var(--color-accent)]/50"
+            }
+          `}
         >
-          {node.title}
-        </Link>
+          <Link
+            href={node.path}
+            className={`
+              block py-1 px-2 text-sm rounded-md transition-colors
+              ${isActive
+                ? 'text-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                : isAncestorActive
+                ? 'text-[var(--color-accent)] font-medium'
+                : 'text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/5'
+              }
+            `}
+            aria-current={isActive ? "location" : undefined}
+          >
+            {node.title}
+          </Link>
+        </div>
       </div>
 
       {hasChildren && isExpanded && (
