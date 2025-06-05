@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@layer base {
+  /* ─────────── Light Mode Tokens ─────────── */
+  :root {
+    /* Neutrals */
+    --color-background:      #FAFAFA;
+    --color-surface:         #FFFFFF;
+    --color-primary-text:    #212121;
+    --color-secondary-text:  #424242;
+    --color-border:          #E0E0E0;
+
+    /* Accent */
+    --color-accent:          #00796B;
+    --color-accent-hover:    #00695C;
+
+    /* Semantic (light) */
+    --color-success:         #388E3C;
+    --color-success-bg:      #E8F5E9;
+    --color-error:           #D32F2F;
+    --color-error-bg:        #FFEBEE;
+    --color-warning:         #FFA000;
+    --color-warning-bg:      #FFF8E1;
+    --color-info:            #0288D1;
+    --color-info-bg:         #E1F5FE;
+  }
+
+  /* ─────────── Dark Mode Overrides ─────────── */
+  .dark {
+    --color-background:      #121212;
+    --color-surface:         #1E1E1E;
+    --color-primary-text:    #E0E0E0;
+    --color-secondary-text:  #B0B0B0;
+    --color-border:          #333333;
+
+    --color-accent:          #4DB6AC;
+    --color-accent-hover:    #369A98;
+
+    --color-success:         #81C784;
+    --color-success-bg:      #1B5E20;
+    --color-error:           #EF9A9A;
+    --color-error-bg:        #B71C1C;
+    --color-warning:         #FFD54F;
+    --color-warning-bg:      #F57F17;
+    --color-info:            #4FC3F7;
+    --color-info-bg:         #01579B;
+  }
+}

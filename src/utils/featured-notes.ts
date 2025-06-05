@@ -1,54 +1,45 @@
 import { getAllNotes, NoteNode, organizeNotesTree } from './notes-mdx';
 
 /**
- * Get featured notes for the home page
+ * Get featured notes for the home page - TOP LEVEL ONLY
  * Priority:
- * 1. Notes explicitly marked as featured in frontmatter
- * 2. Notes with higher order values
- * 3. Root level nodes with descriptions
+ * 1. Top-level notes explicitly marked as featured in frontmatter
+ * 2. Top-level notes with higher order values
+ * 3. Top-level nodes with descriptions
  * 
  * @param limit Maximum number of notes to return
- * @returns Array of featured NoteNodes
+ * @returns Array of featured NoteNodes (top-level only)
  */
 export function getFeaturedNotes(limit: number = 6): NoteNode[] {
   // Get all notes with their frontmatter
   const allNotes = getAllNotes();
   
-  // First, find notes explicitly marked as featured
-  const featuredNotes = allNotes
-    .filter(note => note.frontmatter.featured === true)
-    .map(note => ({ slug: note.slug, frontmatter: note.frontmatter }));
-  
   // Get organized tree for proper structure
   const notesTree = organizeNotesTree();
   
-  // Convert featured notes to proper NoteNode objects
-  const featuredNodes: NoteNode[] = [];
+  // ONLY work with top-level nodes (root level)
+  const topLevelNodes = notesTree;
   
-  // Map featured notes to tree nodes
-  for (const featuredNote of featuredNotes) {
-    const findNodeBySlug = (nodes: NoteNode[], slugParts: string[]): NoteNode | null => {
-      if (slugParts.length === 0) return null;
-      
-      for (const node of nodes) {
-        if (node.slug === slugParts[0]) {
-          if (slugParts.length === 1) return node;
-          return findNodeBySlug(node.children, slugParts.slice(1));
-        }
-      }
-      
-      return null;
-    };
+  // First, find top-level notes explicitly marked as featured
+  const featuredTopLevelNodes: NoteNode[] = [];
+  
+  // Check each top-level node if it's marked as featured
+  for (const node of topLevelNodes) {
+    // Find the corresponding note data to check frontmatter
+    const noteData = allNotes.find(note => 
+      note.slug.length === 1 && note.slug[0] === node.slug
+    );
     
-    const node = findNodeBySlug(notesTree, featuredNote.slug);
-    if (node) featuredNodes.push(node);
+    if (noteData && noteData.frontmatter.featured === true) {
+      featuredTopLevelNodes.push(node);
+    }
   }
   
-  // If we don't have enough featured notes, add top-level nodes with descriptions
-  if (featuredNodes.length < limit) {
-    // Sort nodes by order first, then by whether they have descriptions
-    const remainingNodes = notesTree
-      .filter(node => !featuredNodes.includes(node))
+  // If we don't have enough featured notes, add other top-level nodes
+  if (featuredTopLevelNodes.length < limit) {
+    // Get remaining top-level nodes (not already featured)
+    const remainingTopLevelNodes = topLevelNodes
+      .filter(node => !featuredTopLevelNodes.includes(node))
       .sort((a, b) => {
         // Sort by order first
         if (a.order !== b.order) return a.order - b.order;
@@ -65,9 +56,10 @@ export function getFeaturedNotes(limit: number = 6): NoteNode[] {
       });
     
     // Add remaining nodes until we reach the limit
-    featuredNodes.push(...remainingNodes.slice(0, limit - featuredNodes.length));
+    const needed = limit - featuredTopLevelNodes.length;
+    featuredTopLevelNodes.push(...remainingTopLevelNodes.slice(0, needed));
   }
   
-  // Limit to requested number
-  return featuredNodes.slice(0, limit);
+  // Return only the requested number of top-level nodes
+  return featuredTopLevelNodes.slice(0, limit);
 }

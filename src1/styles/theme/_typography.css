@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@layer base {
+  /* ─────────── Typography Tokens ─────────── */
+  :root {
+    /* Font Families */
+    --font-heading: system-ui, sans-serif;
+    --font-body:    system-ui, sans-serif;
+
+    /* Font-Size Scale */
+    --typography-xs:   0.75rem;  /* 12px */
+    --typography-sm:   0.875rem; /* 14px */
+    --typography-base: 1rem;     /* 16px */
+    --typography-lg:   1.125rem; /* 18px */
+    --typography-xl:   1.25rem;  /* 20px */
+
+    /* Line-Height Scale */
+    --line-height-tight:   1.25;
+    --line-height-normal:  1.5;
+  }
+
+  /* ─────────── Dark-Mode Overrides (if required) ─────────── */
+  .dark {
+    /*
+      Example overrides for dark mode, if needed:
+      --color-primary-text:   #E0E0E0;
+      --color-secondary-text: #B0B0B0;
+      --line-height-normal:   1.6;
+    */
+  }
+
+  /* ─────────── Base Element Styles ─────────── */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color:       var(--color-primary-text);
+  }
+
+  body {
+    font-family:  var(--font-body);
+    color:        var(--color-primary-text);
+    line-height:  var(--line-height-normal);
+    background:   var(--color-background);
+  }
+
+  p {
+    color:        var(--color-secondary-text);
+    margin-bottom: var(--spacing-md);
+  }
+}
