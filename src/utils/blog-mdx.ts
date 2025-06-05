@@ -5,6 +5,7 @@ import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
 import { readFile } from 'node:fs/promises';
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
@@ -21,7 +22,7 @@ export const POSTS_PER_PAGE = 6;
 export interface TOCItem {
   id: string;
   title: string;
-  level: 2 | 3;
+  level: 2 | 3 | 4 | 5 | 6;
 }
 
 export interface Post {
@@ -34,7 +35,7 @@ export interface Post {
   categories: string[];
   tags: string[];
   draft: boolean;
-  toc: TOCItem[]; // ← Added TOC array
+  toc: TOCItem[];
 }
 
 export interface PaginatedPosts {
@@ -44,24 +45,31 @@ export interface PaginatedPosts {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Extract all “## Heading” (level 2) and “### Heading” (level 3) lines from
-// the raw MDX source. Generate a slug‐style `id` and return {id, title, level}.
+// Extract headings and generate TOC with proper slug generation that matches rehype-slug
 // ─────────────────────────────────────────────────────────────────────────────
 function extractTOCFromMdx(source: string): TOCItem[] {
   const lines = source.split('\n');
   const toc: TOCItem[] = [];
 
   for (const line of lines) {
-    // Match lines that start with "## " or "### "
-    const match = line.match(/^(#{2,3})\s+(.*)$/);
+    // Match lines that start with "## ", "### ", "#### ", etc.
+    const match = line.match(/^(#{2,6})\s+(.*)$/);
     if (match) {
-      const level = match[1].length as 2 | 3;
+      const level = match[1].length as 2 | 3 | 4 | 5 | 6;
       const rawText = match[2].trim();
+      
+      // Generate slug the same way rehype-slug does
       const id = rawText
         .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]/g, '');
-      toc.push({ id, title: rawText, level });
+        .trim()
+        .replace(/\s+/g, '-')           // Replace spaces with hyphens
+        .replace(/[^\w\-\u4e00-\u9fa5]/g, '') // Remove special chars, keep Chinese chars
+        .replace(/--+/g, '-')          // Replace multiple hyphens with single
+        .replace(/^-|-$/g, '');        // Remove leading/trailing hyphens
+      
+      if (id) { // Only add if we have a valid ID
+        toc.push({ id, title: rawText, level });
+      }
     }
   }
 
@@ -83,7 +91,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
   // Generate TOC before MDX compilation
   const toc = extractTOCFromMdx(mdxSource);
 
-  const options = {
+  const prettyCodeOptions = {
     theme,
     defaultLang: 'python',
     keepBackground: false,
@@ -105,7 +113,12 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     source: mdxSource,
     options: {
       mdxOptions: {
-        rehypePlugins: [[rehypePrettyCode, options]],
+        rehypePlugins: [
+          // Add rehype-slug to automatically generate IDs for headings
+          rehypeSlug,
+          // Keep your existing pretty code plugin
+          [rehypePrettyCode, prettyCodeOptions],
+        ],
       },
     },
   });
@@ -124,7 +137,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
     categories: data.categories || [],
     tags: data.tags || [],
     draft: data.draft === true,
-    toc, // ← Return the TOC items here
+    toc,
   };
 }
 
