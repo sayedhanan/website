@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/utils/cn';
-import Terminal from './Terminal';
+import Terminal from '@/components/home/Terminal';
 import SubstackSignupForm from '../ui/SubstackSignupForm';
 
 export default function Hero() {

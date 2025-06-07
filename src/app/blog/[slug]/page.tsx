@@ -8,7 +8,6 @@ import {
   Clock,
   Share2,
   Twitter,
-  Facebook,
   Linkedin,
 } from "lucide-react";
 import TocScrollSpy from "@/components/blog/ScrollSpy";
