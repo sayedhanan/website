@@ -1,3 +1,4 @@
+// components/ui/SubstackSignupForm.tsx
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -18,9 +19,9 @@ export default function SubstackSignupForm() {
     <form
       onSubmit={handleSubmit}
       aria-label="newsletter signup form"
-      className="w-full flex flex-col sm:flex-row sm:justify-center gap-2 mt-4"
+      className="w-full flex flex-col sm:flex-row sm:justify-start gap-2 mt-4"
     >
-      <div className="flex justify-center sm:justify-end w-full sm:w-auto">
+      <div className="flex justify-center sm:justify-start w-full sm:w-auto">
         <Input
           type="email"
           placeholder="Enter your email"
@@ -32,14 +33,14 @@ export default function SubstackSignupForm() {
         />
       </div>
       <button
-            type="submit"
-            className={cn(
-              'btn btn-primary',
-              'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-accent]'
-            )}
-          >
-            Subscribe
-          </button>
+        type="submit"
+        className={cn(
+          "btn btn-primary",
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-accent]"
+        )}
+      >
+        Subscribe
+      </button>
     </form>
   );
 }

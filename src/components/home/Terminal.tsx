@@ -1,12 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect, KeyboardEvent, JSX } from 'react';
 
-type Command = {
-  desc: string;
-  execute: () => JSX.Element;
-};
-
+// Interactive portfolio terminal component
 export default function Terminal() {
   const [input, setInput] = useState('');
   const [lines, setLines] = useState<JSX.Element[]>([
@@ -19,7 +15,8 @@ export default function Terminal() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const commands: Record<string, Command> = {
+  // Define commands and their execution results
+  const commands: Record<string, { desc: string; execute: () => JSX.Element }> = {
     help: {
       desc: 'Show available commands',
       execute: () => (
@@ -88,13 +85,13 @@ export default function Terminal() {
     }
   };
 
+  // Handle command input
   const handleCommand = (command: string) => {
     const cmd = command.trim().toLowerCase();
     const newHistory = [...history, cmd];
     setHistory(newHistory);
     setHistoryIndex(newHistory.length);
 
-    // Add command to output
     setLines(prev => [
       ...prev,
       <div key={`cmd-${Date.now()}`} className="output">
@@ -102,7 +99,6 @@ export default function Terminal() {
       </div>
     ]);
 
-    // Process command
     if (commands[cmd]) {
       setLines(prev => [...prev, commands[cmd].execute()]);
     } else if (cmd) {
@@ -118,6 +114,7 @@ export default function Terminal() {
     setInput('');
   };
 
+  // Keyboard navigation for history and submit
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleCommand(input);
@@ -134,7 +131,7 @@ export default function Terminal() {
     }
   };
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom on new lines
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
@@ -142,9 +139,9 @@ export default function Terminal() {
   }, [lines]);
 
   return (
-    <div className="w-full max-w-lg border border-gray-700 rounded-xl overflow-hidden shadow-2xl">
+    <div className="w-full max-w-lg border border-gray-700 rounded-xl overflow-hidden shadow-2xl" style={{ backgroundColor: '#1a202c', color: '#fff' }}>
       {/* Terminal header */}
-      <div className="bg-gray-800 px-4 py-3 flex items-center gap-2">
+      <div className="bg-gray-800 px-4 py-3 flex items-center gap-2" style={{ backgroundColor: '#2d3748' }}>
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
         <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -154,19 +151,21 @@ export default function Terminal() {
       {/* Terminal content */}
       <div 
         ref={contentRef}
-        className="bg-gray-900 p-4 h-[400px] overflow-y-auto font-mono"
+        className="p-4 h-[400px] overflow-y-auto font-mono"
+        style={{ backgroundColor: '#1a202c', color: '#fff' }}
       >
         {lines}
         <div className="input-line flex items-center mt-2">
-          <span className="prompt text-green-400 mr-2">$</span>
+          <span className="prompt mr-2" style={{ color: '#68D391' }}>$</span>
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            className="bg-transparent text-white flex-1 focus:outline-none caret-green-500"
+            className="bg-transparent flex-1 focus:outline-none caret-green-500"
             spellCheck={false}
+            style={{ color: '#fff' }}
           />
         </div>
       </div>
