@@ -1,0 +1,50 @@
+{
+    "help": {
+      "desc": "Show available commands",
+      "response": [
+        "Available commands:",
+        "  help    – Show available commands",
+        "  about   – About me",
+        "  projects – Show recent projects",
+        "  skills  – List technical skills",
+        "  contact – Show contact information",
+        "  clear   – Clear terminal history"
+      ]
+    },
+    "about": {
+      "desc": "About me",
+      "response": [
+        "Full Stack Developer with 3+ years experience",
+        "Specialized in React, Next.js, and modern web technologies",
+        "Passionate about UX and performance optimization",
+        "Tech stack: TypeScript, Node.js, Tailwind, PostgreSQL"
+      ]
+    },
+    "projects": {
+      "desc": "Show recent projects",
+      "response": [
+        "2024: E-commerce platform with real-time analytics",
+        "2023: Healthcare management system",
+        "2022: AI-powered content recommendation engine"
+      ]
+    },
+    "skills": {
+      "desc": "List technical skills",
+      "response": [
+        "TypeScript, React, Next.js, Node.js, Tailwind, GraphQL, AWS, Docker"
+      ]
+    },
+    "contact": {
+      "desc": "Show contact information",
+      "response": [
+        "Email: hello@sayedhanan.com",
+        "GitHub: github.com/sayedhanan",
+        "LinkedIn: linkedin.com/in/sayedhanan"
+      ]
+    },
+    "clear": {
+      "desc": "Clear terminal history",
+      "response": []
+    }
+  }
+  

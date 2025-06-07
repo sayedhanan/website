@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect, KeyboardEvent, JSX } from 'react';
 
-// Interactive portfolio terminal component
 export default function Terminal() {
   const [input, setInput] = useState('');
   const [lines, setLines] = useState<JSX.Element[]>([
@@ -13,98 +12,73 @@ export default function Terminal() {
   ]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [commands, setCommands] = useState<Record<string, { desc: string; response: string[] }> | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Define commands and their execution results
-  const commands: Record<string, { desc: string; execute: () => JSX.Element }> = {
-    help: {
-      desc: 'Show available commands',
-      execute: () => (
-        <div className="output">
-          Available commands:<br />
-          {Object.entries(commands).map(([cmd, config]) => (
-            <div key={cmd} className="flex gap-4">
-              <span className="command flex-1">{cmd}</span>
-              <span className="flex-[3]">{config.desc}</span>
-            </div>
-          ))}
-        </div>
-      )
-    },
-    about: {
-      desc: 'About me',
-      execute: () => (
-        <div className="output">
-          <span className="highlight">Full Stack Developer</span> with 3+ years experience<br />
-          Specialized in React, Next.js, and modern web technologies<br />
-          Passionate about UX and performance optimization<br />
-          Tech stack: TypeScript, Node.js, Tailwind, PostgreSQL
-        </div>
-      )
-    },
-    projects: {
-      desc: 'Show recent projects',
-      execute: () => (
-        <div className="output">
-          <span className="highlight">2024:</span> E-commerce platform with real-time analytics<br />
-          <span className="highlight">2023:</span> Healthcare management system<br />
-          <span className="highlight">2022:</span> AI-powered content recommendation engine
-        </div>
-      )
-    },
-    skills: {
-      desc: 'List technical skills',
-      execute: () => (
-        <div className="output">
-          <div className="flex flex-wrap gap-2">
-            {['TypeScript', 'React', 'Next.js', 'Node.js', 'Tailwind', 'GraphQL', 'AWS', 'Docker'].map(skill => (
-              <span key={skill} className="success bg-opacity-20 px-3 py-1 rounded-full">
-                {skill}
-              </span>
-            ))}
+  // 1) Fetch commands.json on mount
+  useEffect(() => {
+    fetch('/commands.json')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => setCommands(data))
+      .catch(err => {
+        console.error('Failed to load commands.json', err);
+        setLines(prev => [
+          ...prev,
+          <div key="err-load" className="output error">
+            ⚠️ Could not load commands. Check console.
           </div>
-        </div>
-      )
-    },
-    contact: {
-      desc: 'Show contact information',
-      execute: () => (
-        <div className="output">
-          Email: <span className="highlight">hello@sayedhanan.com</span><br />
-          GitHub: <span className="highlight">github.com/sayedhanan</span><br />
-          LinkedIn: <span className="highlight">linkedin.com/in/sayedhanan</span>
-        </div>
-      )
-    },
-    clear: {
-      desc: 'Clear terminal history',
-      execute: () => {
-        setLines([]);
-        return <></>;
-      }
-    }
-  };
+        ]);
+      });
+  }, []);
 
-  // Handle command input
-  const handleCommand = (command: string) => {
-    const cmd = command.trim().toLowerCase();
-    const newHistory = [...history, cmd];
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length);
+  // 2) Handle a user-entered command
+  const handleCommand = (raw: string) => {
+    const cmd = raw.trim().toLowerCase();
+    setHistory(h => [...h, cmd]);
+    setHistoryIndex(history.length + 1);
 
+    // echo the prompt + command
     setLines(prev => [
       ...prev,
       <div key={`cmd-${Date.now()}`} className="output">
-        <span className="prompt">$</span> {command}
+        <span className="prompt">$</span> {raw}
       </div>
     ]);
 
-    if (commands[cmd]) {
-      setLines(prev => [...prev, commands[cmd].execute()]);
-    } else if (cmd) {
+    if (!commands) {
+      // still loading
       setLines(prev => [
         ...prev,
-        <div key={`error-${Date.now()}`} className="output error">
+        <div key={`err-${Date.now()}`} className="output error">
+          Commands are still loading...
+        </div>
+      ]);
+      setInput('');
+      return;
+    }
+
+    const def = commands[cmd];
+    if (def) {
+      // special case: clear
+      if (cmd === 'clear') {
+        setLines([]);
+      } else {
+        // render each line of response
+        const outputElems = def.response.map((line, i) => (
+          <div key={`out-${Date.now()}-${i}`} className="output">
+            {line}
+          </div>
+        ));
+        setLines(prev => [...prev, ...outputElems]);
+      }
+    } else if (cmd) {
+      // unknown
+      setLines(prev => [
+        ...prev,
+        <div key={`err-${Date.now()}`} className="output error">
           Command not found: {cmd}<br />
           Type <span className="command">'help'</span> for available commands
         </div>
@@ -114,24 +88,24 @@ export default function Terminal() {
     setInput('');
   };
 
-  // Keyboard navigation for history and submit
+  // 3) Keyboard nav & submit
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleCommand(input);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      const newIndex = Math.max(historyIndex - 1, 0);
-      setHistoryIndex(newIndex);
-      setInput(history[newIndex] || '');
+      const idx = Math.max(historyIndex - 1, 0);
+      setHistoryIndex(idx);
+      setInput(history[idx] || '');
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      const newIndex = Math.min(historyIndex + 1, history.length);
-      setHistoryIndex(newIndex);
-      setInput(newIndex < history.length ? history[newIndex] : '');
+      const idx = Math.min(historyIndex + 1, history.length);
+      setHistoryIndex(idx);
+      setInput(idx < history.length ? history[idx] : '');
     }
   };
 
-  // Auto-scroll to bottom on new lines
+  // 4) Auto-scroll
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
@@ -139,32 +113,28 @@ export default function Terminal() {
   }, [lines]);
 
   return (
-    <div className="w-full max-w-lg border border-gray-700 rounded-xl overflow-hidden shadow-2xl" style={{ backgroundColor: '#1a202c', color: '#fff' }}>
-      {/* Terminal header */}
-      <div className="bg-gray-800 px-4 py-3 flex items-center gap-2" style={{ backgroundColor: '#2d3748' }}>
+    <div className="w-full max-w-lg border border-gray-700 rounded-xl overflow-hidden shadow-2xl bg-[#1a202c] text-white">
+      {/* Header */}
+      <div className="bg-gray-800 px-4 py-3 flex items-center gap-2">
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
         <div className="w-3 h-3 rounded-full bg-green-500"></div>
         <div className="text-sm text-gray-400 ml-2">bash</div>
       </div>
 
-      {/* Terminal content */}
-      <div 
-        ref={contentRef}
-        className="p-4 h-[400px] overflow-y-auto font-mono"
-        style={{ backgroundColor: '#1a202c', color: '#fff' }}
-      >
+      {/* Content */}
+      <div ref={contentRef} className="p-4 h-[400px] overflow-y-auto font-mono">
         {lines}
         <div className="input-line flex items-center mt-2">
-          <span className="prompt mr-2" style={{ color: '#68D391' }}>$</span>
+          <span className="prompt mr-2 text-green-300">$</span>
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            className="bg-transparent flex-1 focus:outline-none caret-green-500"
             spellCheck={false}
+            className="bg-transparent flex-1 focus:outline-none caret-green-500"
             style={{ color: '#fff' }}
           />
         </div>
