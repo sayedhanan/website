@@ -1,3 +1,4 @@
+// app/components/home/Hero.tsx
 'use client';
 
 import { cn } from '@/utils/cn';
@@ -24,8 +25,8 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
   const [display, setDisplay] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const currentWord = useMemo(() => 
-    words[wordIndex % words.length], 
+  const currentWord = useMemo(
+    () => words[wordIndex % words.length],
     [wordIndex, words]
   );
 
@@ -45,41 +46,37 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
         }, deletingSpeed);
       } else {
         setIsDeleting(false);
-        setWordIndex(prev => (prev + 1) % words.length);
+        setWordIndex((prev) => (prev + 1) % words.length);
       }
     }
   }, [
-    display, 
-    isDeleting, 
-    currentWord, 
-    typingSpeed, 
-    deletingSpeed, 
-    pauseAfterType, 
-    words.length
+    display,
+    isDeleting,
+    currentWord,
+    typingSpeed,
+    deletingSpeed,
+    pauseAfterType,
+    words.length,
   ]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    
     if (words.length > 0) {
       timeoutId = setTimeout(handleTyping, 0);
     }
-
     return () => clearTimeout(timeoutId);
   }, [handleTyping, words.length]);
 
   return (
-    <span 
+    <span
       className={className}
       aria-live="polite"
       aria-label={`Currently showing: ${display}`}
     >
       {display}
-      <span 
-        className="inline-block w-1 h-[1em] bg-[var(--color-primary-text)] ml-0.5 align-middle" 
-        style={{
-          animation: 'blink 1s step-start infinite',
-        }}
+      <span
+        className="inline-block w-1 h-[1em] bg-[var(--color-primary-text)] ml-0.5 align-middle"
+        style={{ animation: 'blink 1s step-start infinite' }}
         aria-hidden="true"
       />
     </span>
@@ -87,17 +84,15 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
 };
 
 export default function Hero() {
-  const animatedWords = useMemo(() => 
-    ['A Student', 'A Curious Being'], 
-    []
-  );
+  const animatedWords = useMemo(() => ['A Student', 'A Curious Being'], []);
 
   return (
     <div
       aria-label="Homepage hero section"
-      className={cn('flex flex-col lg:flex-row items-center gap-10 py-8')}
+      className={cn(
+        'flex flex-col lg:flex-row items-start gap-10 py-8'
+      )}
     >
-      {/* Inline styles for blink animation - will only be injected once */}
       <style jsx global>{`
         @keyframes blink {
           0%, 100% { opacity: 1 }
@@ -105,8 +100,8 @@ export default function Hero() {
         }
       `}</style>
 
-      {/* Text & Newsletter Form */}
-      <div className="flex-1 space-y-6">
+      {/* Left: Text & Form */}
+      <div className="w-full max-w-2xl mx-auto lg:mx-0 space-y-6">
         <h1
           className={cn(
             'text-4xl md:text-5xl lg:text-6xl',
@@ -129,18 +124,17 @@ export default function Hero() {
             'max-w-2xl'
           )}
         >
-          Hi, I'm Sayed Hanan. I'm studying software engineering and fascinated by AI. 
-          This is where I share my experiments, mistakes, and occasional wins. 
-          If you're also learning, maybe we can figure things out together
+          Hi, I'm Sayed Hanan. I'm studying software engineering and fascinated
+          by AI. This is where I share my experiments, mistakes, and occasional
+          wins. If you're also learning, maybe we can figure things out
+          together.
         </p>
 
-        <div className="pt-4">
-          <SubstackSignupForm />
-        </div>
+        <SubstackSignupForm />
       </div>
 
-      {/* Terminal Component */}
-      <div className="flex-1 flex justify-center w-full">
+      {/* Right: Terminal */}
+      <div className="w-full max-w-2xl mx-auto lg:mx-0 flex justify-center">
         <Terminal />
       </div>
     </div>

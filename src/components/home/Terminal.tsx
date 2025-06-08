@@ -1,3 +1,4 @@
+// app/components/home/Terminal.tsx
 'use client';
 
 import React, { useState, useRef, useEffect, KeyboardEvent, JSX } from 'react';
@@ -8,53 +9,51 @@ export default function Terminal() {
     <div key="welcome" className="output">
       Welcome to Interactive Portfolio v1.0<br />
       Type <span className="command">'help'</span> for available commands
-    </div>
+    </div>,
   ]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [commands, setCommands] = useState<Record<string, { desc: string; response: string[] }> | null>(null);
+  const [commands, setCommands] = useState<
+    Record<string, { desc: string; response: string[] }> | null
+  >(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 1) Fetch commands.json on mount
   useEffect(() => {
     fetch('/commands.json')
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(data => setCommands(data))
-      .catch(err => {
+      .then((data) => setCommands(data))
+      .catch((err) => {
         console.error('Failed to load commands.json', err);
-        setLines(prev => [
+        setLines((prev) => [
           ...prev,
           <div key="err-load" className="output error">
             ⚠️ Could not load commands. Check console.
-          </div>
+          </div>,
         ]);
       });
   }, []);
 
-  // 2) Handle a user-entered command
   const handleCommand = (raw: string) => {
     const cmd = raw.trim().toLowerCase();
-    setHistory(h => [...h, cmd]);
+    setHistory((h) => [...h, cmd]);
     setHistoryIndex(history.length + 1);
 
-    // echo the prompt + command
-    setLines(prev => [
+    setLines((prev) => [
       ...prev,
       <div key={`cmd-${Date.now()}`} className="output">
         <span className="prompt">$</span> {raw}
-      </div>
+      </div>,
     ]);
 
     if (!commands) {
-      // still loading
-      setLines(prev => [
+      setLines((prev) => [
         ...prev,
         <div key={`err-${Date.now()}`} className="output error">
           Commands are still loading...
-        </div>
+        </div>,
       ]);
       setInput('');
       return;
@@ -62,33 +61,29 @@ export default function Terminal() {
 
     const def = commands[cmd];
     if (def) {
-      // special case: clear
       if (cmd === 'clear') {
         setLines([]);
       } else {
-        // render each line of response
         const outputElems = def.response.map((line, i) => (
           <div key={`out-${Date.now()}-${i}`} className="output">
             {line}
           </div>
         ));
-        setLines(prev => [...prev, ...outputElems]);
+        setLines((prev) => [...prev, ...outputElems]);
       }
     } else if (cmd) {
-      // unknown
-      setLines(prev => [
+      setLines((prev) => [
         ...prev,
         <div key={`err-${Date.now()}`} className="output error">
           Command not found: {cmd}<br />
           Type <span className="command">'help'</span> for available commands
-        </div>
+        </div>,
       ]);
     }
 
     setInput('');
   };
 
-  // 3) Keyboard nav & submit
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleCommand(input);
@@ -105,7 +100,6 @@ export default function Terminal() {
     }
   };
 
-  // 4) Auto-scroll
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
@@ -113,7 +107,7 @@ export default function Terminal() {
   }, [lines]);
 
   return (
-    <div className="w-full max-w-lg border border-gray-700 rounded-xl overflow-hidden shadow-2xl bg-[#1a202c] text-white">
+    <div className="w-full max-w-2xl border border-gray-700 rounded-xl overflow-hidden shadow-2xl bg-[#1a202c] text-white">
       {/* Header */}
       <div className="bg-gray-800 px-4 py-3 flex items-center gap-2">
         <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -123,14 +117,17 @@ export default function Terminal() {
       </div>
 
       {/* Content */}
-      <div ref={contentRef} className="p-4 h-[400px] overflow-y-auto font-mono">
+      <div
+        ref={contentRef}
+        className="p-4 h-[400px] overflow-y-auto font-mono"
+      >
         {lines}
         <div className="input-line flex items-center mt-2">
           <span className="prompt mr-2 text-green-300">$</span>
           <input
             type="text"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
             spellCheck={false}
