@@ -12,18 +12,17 @@ import type { Metadata } from 'next';
 import Breadcrumb from '@/components/notes/BreadCrumb';
 
 interface NotePageProps {
-  params: {
-    slug: string[];
-  };
+  params: Promise<{ slug: string[] }>;
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
-  const slug = params?.slug || [];
-  const note = await getNoteBySlug(slug);
+  // Await params before using
+  const { slug } = await params;
+  const note = await getNoteBySlug(slug || []);
 
   if (!note) {
     return {
@@ -41,11 +40,10 @@ export async function generateMetadata({
 
 export default async function NotePage({
   params,
-}: {
-  params: { slug: string[] };
-}) {
-  const slug = params?.slug || [];
-  const note = await getNoteBySlug(slug);
+}: NotePageProps) {
+  // Await params before using
+  const { slug } = await params;
+  const note = await getNoteBySlug(slug || []);
 
   if (!note) {
     return notFound();

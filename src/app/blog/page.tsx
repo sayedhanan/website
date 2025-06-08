@@ -5,13 +5,14 @@ import { CategoryNav } from '@/components/blog/CategoryNav';
 import Pagination from '@/components/blog/Pagination';
 
 interface BlogPageProps {
-  searchParams?: {
-    page?: string;
-  };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const currentPage = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
+  // Await searchParams before using
+  const { page } = await searchParams;
+  const currentPage = page ? parseInt(page, 10) : 1;
+
   const { posts, totalPages } = await getPaginatedPosts(currentPage);
   const categories = await getAllCategories();
 

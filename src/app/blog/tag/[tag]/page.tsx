@@ -1,16 +1,8 @@
-// src/app/blog/tag/[tag]/page.tsx
 import { getAllTags, getPaginatedPostsByTag, getAllCategories } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import { CategoryNav } from '@/components/blog/CategoryNav';
 import Pagination from '@/components/blog/Pagination';
 import { notFound } from 'next/navigation';
-
-interface TagPageProps {
-  params: { tag: string };
-  searchParams?: {
-    page?: string;
-  };
-}
 
 export async function generateStaticParams() {
   const tags = await getAllTags();
@@ -19,29 +11,38 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function TagPage({ params, searchParams }: TagPageProps) {
-  const { tag } = params;
-  const currentPage = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
+export default async function TagPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ tag: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
+  // Await both params and searchParams
+  const { tag } = await params;
+  const { page } = await searchParams;
+  const currentPage = page ? parseInt(page, 10) : 1;
   const decodedTag = decodeURIComponent(tag);
   
   // Find the exact tag with proper casing
   const allTags = await getAllTags();
   const exactTag = allTags.find(
-    t => t.toLowerCase() === decodedTag.toLowerCase()
+    (t) => t.toLowerCase() === decodedTag.toLowerCase()
   );
   
   if (!exactTag) {
     notFound();
   }
   
-  const { posts, totalPages } = await getPaginatedPostsByTag(exactTag, currentPage);
+  const { posts, totalPages } = await getPaginatedPostsByTag(
+    exactTag,
+    currentPage
+  );
   const categories = await getAllCategories();
   
   return (
     <section className="section-wrapper section-spacing">
-      <h1 className="text-3xl font-bold mb-6">
-        Tag: #{exactTag}
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Tag: #{exactTag}</h1>
       
       <CategoryNav categories={categories} />
       
@@ -61,10 +62,10 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             ))}
           </div>
           
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            tagPath={tag} 
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            tagPath={tag}
           />
         </>
       ) : (

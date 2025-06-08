@@ -1,5 +1,3 @@
-// src/app/blog/[slug]/page.tsx
-
 import { getPostBySlug, getPostSlugs } from "@/utils/blog-mdx";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -18,10 +16,15 @@ export async function generateStaticParams() {
   return getPostSlugs().map((slug) => ({ slug }));
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  let post;
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  // Await params before extracting
+  const { slug } = await params;
 
+  let post;
   try {
     post = await getPostBySlug(slug);
     if (post.draft && process.env.NODE_ENV !== "development") {
@@ -51,14 +54,14 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <TocScrollSpy />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/** ─── MOBILE/TABLET: Table of Contents at Top ─────────────────── */}
         <div className="block lg:hidden mb-8">
           <TableOfContents items={toc} isMobile={true} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/** ─── DESKTOP: Left Sidebar TOC ─────────────────────────────── */}
           <aside className="hidden lg:block lg:col-span-3 px-4 relative">
             <TableOfContents items={toc} isMobile={false} />
@@ -66,7 +69,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
           {/** ─── MAIN CONTENT ──────────────────────────────────────────── */}
           <article className="col-span-1 lg:col-span-6 mx-auto lg:mx-0 prose prose-base sm:prose-lg lg:prose-xl dark:prose-invert max-w-none">
-            
+
             {/** Draft Notice */}
             {post.draft && (
               <div className="bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 p-4 mb-6 rounded-md">
@@ -81,7 +84,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                   <Link
                     key={category}
                     href={`/blog/category/${category.toLowerCase()}`}
-                    className="
+                    className={`
                       text-xs sm:text-sm font-medium
                       px-2 py-1 sm:px-3 sm:py-1.5
                       rounded-md
@@ -90,7 +93,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                       dark:border-[var(--color-accent)] dark:hover:bg-[var(--color-accent-hover)]
                       dark:hover:text-black
                       transition-colors
-                    "
+                    `}
                   >
                     {category}
                   </Link>
@@ -124,10 +127,10 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
             {/** Mobile Social Share - Above Content */}
             <div className="block sm:hidden mb-6 not-prose">
-              <SocialShare 
-                shareUrl={shareUrl} 
-                title={title} 
-                isMobile={true} 
+              <SocialShare
+                shareUrl={shareUrl}
+                title={title}
+                isMobile={true}
               />
             </div>
 
@@ -143,7 +146,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                     <Link
                       key={tag}
                       href={`/blog/tag/${tag.toLowerCase()}`}
-                      className="
+                      className={`
                         text-xs sm:text-sm font-medium
                         px-2 py-1 sm:px-3 sm:py-1.5
                         rounded-md
@@ -152,7 +155,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                         dark:border-[var(--color-accent)] dark:hover:bg-[var(--color-accent-hover)]
                         dark:hover:text-black
                         transition-colors
-                      "
+                      `}
                     >
                       #{tag}
                     </Link>
@@ -163,20 +166,20 @@ export default async function PostPage({ params }: { params: { slug: string } })
 
             {/** Mobile/Tablet Social Share - Below Content */}
             <div className="block lg:hidden mt-8 pt-6 border-t border-[var(--color-border)] not-prose">
-              <SocialShare 
-                shareUrl={shareUrl} 
-                title={title} 
-                isMobile={true} 
+              <SocialShare
+                shareUrl={shareUrl}
+                title={title}
+                isMobile={true}
               />
             </div>
           </article>
 
           {/** ─── DESKTOP: Right Sidebar Social Share ─────────────────── */}
           <aside className="hidden lg:block lg:col-span-3 relative">
-            <SocialShare 
-              shareUrl={shareUrl} 
-              title={title} 
-              isMobile={false} 
+            <SocialShare
+              shareUrl={shareUrl}
+              title={title}
+              isMobile={false}
             />
           </aside>
         </div>

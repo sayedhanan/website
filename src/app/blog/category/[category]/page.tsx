@@ -1,16 +1,8 @@
-// src/app/blog/category/[category]/page.tsx
 import { getAllCategories, getPaginatedPostsByCategory } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import { CategoryNav } from '@/components/blog/CategoryNav';
 import Pagination from '@/components/blog/Pagination';
 import { notFound } from 'next/navigation';
-
-interface CategoryPageProps {
-  params: { category: string };
-  searchParams?: {
-    page?: string;
-  };
-}
 
 export async function generateStaticParams() {
   const categories = await getAllCategories();
@@ -19,28 +11,37 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { category } = params;
-  const currentPage = searchParams?.page ? parseInt(searchParams.page, 10) : 1;
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ category: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
+  // Await both params and searchParams
+  const { category } = await params;
+  const { page } = await searchParams;
+  const currentPage = page ? parseInt(page, 10) : 1;
   const decodedCategory = decodeURIComponent(category);
   
   // Find the exact category with proper casing
   const allCategories = await getAllCategories();
   const exactCategory = allCategories.find(
-    cat => cat.toLowerCase() === decodedCategory.toLowerCase()
+    (cat) => cat.toLowerCase() === decodedCategory.toLowerCase()
   );
   
   if (!exactCategory) {
     notFound();
   }
   
-  const { posts, totalPages } = await getPaginatedPostsByCategory(exactCategory, currentPage);
+  const { posts, totalPages } = await getPaginatedPostsByCategory(
+    exactCategory,
+    currentPage
+  );
   
   return (
     <section className="section-wrapper section-spacing">
-      <h1 className="text-3xl font-bold mb-6">
-        Category: {exactCategory}
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Category: {exactCategory}</h1>
       
       <CategoryNav categories={allCategories} />
       
@@ -60,10 +61,10 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             ))}
           </div>
           
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            categoryPath={category} 
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            categoryPath={category}
           />
         </>
       ) : (

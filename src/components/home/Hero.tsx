@@ -1,15 +1,110 @@
 'use client';
 
 import { cn } from '@/utils/cn';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Terminal from '@/components/home/Terminal';
 import SubstackSignupForm from '../ui/SubstackSignupForm';
 
+interface AnimatedTextProps {
+  words: string[];
+  typingSpeed?: number;
+  deletingSpeed?: number;
+  pauseAfterType?: number;
+  className?: string;
+}
+
+const AnimatedText: React.FC<AnimatedTextProps> = ({
+  words,
+  typingSpeed = 150,
+  deletingSpeed = 75,
+  pauseAfterType = 1500,
+  className = '',
+}) => {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [display, setDisplay] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const currentWord = useMemo(() => 
+    words[wordIndex % words.length], 
+    [wordIndex, words]
+  );
+
+  const handleTyping = useCallback(() => {
+    if (!isDeleting) {
+      if (display.length < currentWord.length) {
+        setTimeout(() => {
+          setDisplay(currentWord.slice(0, display.length + 1));
+        }, typingSpeed);
+      } else {
+        setTimeout(() => setIsDeleting(true), pauseAfterType);
+      }
+    } else {
+      if (display.length > 0) {
+        setTimeout(() => {
+          setDisplay(currentWord.slice(0, display.length - 1));
+        }, deletingSpeed);
+      } else {
+        setIsDeleting(false);
+        setWordIndex(prev => (prev + 1) % words.length);
+      }
+    }
+  }, [
+    display, 
+    isDeleting, 
+    currentWord, 
+    typingSpeed, 
+    deletingSpeed, 
+    pauseAfterType, 
+    words.length
+  ]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (words.length > 0) {
+      timeoutId = setTimeout(handleTyping, 0);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [handleTyping, words.length]);
+
+  return (
+    <span 
+      className={className}
+      aria-live="polite"
+      aria-label={`Currently showing: ${display}`}
+    >
+      {display}
+      <span 
+        className="inline-block w-1 h-[1em] bg-[var(--color-primary-text)] ml-0.5 align-middle" 
+        style={{
+          animation: 'blink 1s step-start infinite',
+        }}
+        aria-hidden="true"
+      />
+    </span>
+  );
+};
+
 export default function Hero() {
+  const animatedWords = useMemo(() => 
+    ['A Student', 'A Curious Being'], 
+    []
+  );
+
   return (
     <div
-      aria-label="Homepage hero content"
+      aria-label="Homepage hero section"
       className={cn('flex flex-col lg:flex-row items-center gap-10 py-8')}
     >
+      {/* Inline styles for blink animation - will only be injected once */}
+      <style jsx global>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1 }
+          50% { opacity: 0 }
+        }
+      `}</style>
+
       {/* Text & Newsletter Form */}
       <div className="flex-1 space-y-6">
         <h1
@@ -19,11 +114,12 @@ export default function Hero() {
             'text-[var(--color-primary-text)]'
           )}
         >
-          Hi, I'm Sayed Hanan.
+          Hi, I’m Sayed Hanan.
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-            I build web experiences
-          </span>
+          <AnimatedText
+            words={animatedWords}
+            className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+          />
         </h1>
 
         <p
@@ -33,12 +129,12 @@ export default function Hero() {
             'max-w-2xl'
           )}
         >
-          Full-stack developer specializing in modern JavaScript frameworks and
-          UX-focused design. Welcome to my interactive portfolio.
+          Hi, I'm Sayed Hanan. I'm studying software engineering and fascinated by AI. 
+          This is where I share my experiments, mistakes, and occasional wins. 
+          If you're also learning, maybe we can figure things out together
         </p>
 
         <div className="pt-4">
-          {/* Only the SubstackSignupForm — removed the extra dummy form */}
           <SubstackSignupForm />
         </div>
       </div>
