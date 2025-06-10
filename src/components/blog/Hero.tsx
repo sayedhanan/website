@@ -17,7 +17,7 @@ export function BlogHero() {
       <div className="absolute inset-x-0 bottom-0 translate-y-1/2">
         <div className="bg-[--color-accent]">
           <div className="section-wrapper py-4">
-            <CategoryNav />
+            <CategoryNav categories={[]} />
           </div>
         </div>
       </div>

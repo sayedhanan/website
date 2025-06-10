@@ -124,7 +124,7 @@ export default function Hero() {
             'max-w-2xl'
           )}
         >
-          Hi, I'm Sayed Hanan. I'm studying software engineering and fascinated
+          I'm studying software engineering and fascinated
           by AI. This is where I share my experiments, mistakes, and occasional
           wins. If you're also learning, maybe we can figure things out
           together.

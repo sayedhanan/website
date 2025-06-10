@@ -1,4 +1,3 @@
-// src/components/blog/TableOfContents.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -71,7 +70,7 @@ export default function TableOfContents({ items, isMobile }: TableOfContentsProp
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    
+
     const target = document.getElementById(id);
     if (target) {
       const offset = isMobile ? 100 : 80;
@@ -80,12 +79,12 @@ export default function TableOfContents({ items, isMobile }: TableOfContentsProp
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
 
       setActiveId(id);
       window.history.pushState(null, "", `#${id}`);
-      
+
       // On mobile, collapse TOC after clicking
       if (isMobile) {
         setIsExpanded(false);
@@ -116,35 +115,33 @@ export default function TableOfContents({ items, isMobile }: TableOfContentsProp
             <ChevronDown className="w-4 h-4 text-[var(--color-secondary-text)]" />
           )}
         </button>
-        
+
         {isExpanded && (
           <div className="border-t border-[var(--color-border)] bg-white dark:bg-gray-900">
             <nav className="p-4">
               <ul className="text-sm space-y-1">
-                {items.map((item) => {
+                {items.map((item, index) => {
                   const isActive = activeId === item.id;
-                  
                   return (
                     <li
-                      key={item.id}
-                      className={`
-                        transition-all duration-200 ease-in-out
+                      key={`${item.id}-${index}`}
+                      className={
+                        `transition-all duration-200 ease-in-out
                         ${item.level === 2 ? "font-medium" : "font-normal"}
                         ${item.level === 3 ? "pl-4" : ""}
                         ${item.level === 4 ? "pl-8" : ""}
-                        ${item.level >= 5 ? "pl-12" : ""}
-                      `}
+                        ${item.level >= 5 ? "pl-12" : ""}`
+                      }
                     >
                       <a
                         href={`#${item.id}`}
-                        className={`
-                          block py-2 px-3 rounded-md transition-colors
+                        onClick={(e) => handleClick(e, item.id)}
+                        className={
+                          `block py-2 px-3 rounded-md transition-colors
                           ${isActive 
                             ? "text-[var(--color-accent)] bg-[var(--color-accent)]/10 border-l-2 border-[var(--color-accent)]" 
-                            : "text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/5"
-                          }
-                        `}
-                        onClick={(e) => handleClick(e, item.id)}
+                            : "text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/5"}`
+                        }
                         aria-current={isActive ? "location" : undefined}
                       >
                         {item.title}
@@ -168,14 +165,13 @@ export default function TableOfContents({ items, isMobile }: TableOfContentsProp
       </h4>
       <nav>
         <ul className="text-sm space-y-1">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const isActive = activeId === item.id;
-            
             return (
               <li
-                key={item.id}
-                className={`
-                  transition-all duration-200 ease-in-out
+                key={`${item.id}-${index}`}
+                className={
+                  `transition-all duration-200 ease-in-out
                   ${item.level === 2 ? "font-medium" : "font-normal"}
                   ${item.level === 3 ? "pl-3" : ""}
                   ${item.level === 4 ? "pl-6" : ""}
@@ -183,20 +179,18 @@ export default function TableOfContents({ items, isMobile }: TableOfContentsProp
                   border-l-2 transition-colors
                   ${isActive 
                     ? "border-[var(--color-accent)] text-[var(--color-accent)]" 
-                    : "border-transparent hover:border-[var(--color-accent)]/50"
-                  }
-                `}
+                    : "border-transparent hover:border-[var(--color-accent)]/50"}`
+                }
               >
                 <a
                   href={`#${item.id}`}
-                  className={`
-                    block py-1 px-2 rounded-md transition-colors
+                  onClick={(e) => handleClick(e, item.id)}
+                  className={
+                    `block py-1 px-2 rounded-md transition-colors
                     ${isActive 
                       ? "text-[var(--color-accent)] bg-[var(--color-accent)]/10" 
-                      : "text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/5"
-                    }
-                  `}
-                  onClick={(e) => handleClick(e, item.id)}
+                      : "text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] hover:bg-[var(--color-accent)]/5"}`
+                  }
                   aria-current={isActive ? "location" : undefined}
                 >
                   {item.title}
