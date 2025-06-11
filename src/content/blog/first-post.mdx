@@ -9,28 +9,195 @@ category: "Demo"
 
 This is my very first post, written in **MDX** under the App Router setup.
 
-
 - list one
 - list two
 - list three
 
 > Han
 
-
 # Hanan
 ## Hanan
 ### Hanan
 
-```python
-def function:
-    print("name")
-```
+Instead of separate code blocks, let's use tabbed code blocks:
 
-```js
-// This is a comment
+<QuickCodeTabs
+  title="Hello World Examples"
+  python={`def hello_world():
+    print("Hello, World!")
+    return "Hello from Python!"
+
+# Call the function
+message = hello_world()
+print(message)`}
+  javascript={`// This is a comment
 function helloWorld() {
   const greeting = "Hello, World!";
   console.log(greeting);
   return greeting;
 }
+
+// Call the function
+const message = helloWorld();
+console.log(message);`}
+/>
+
+You can also use the more flexible CodeTabs component:
+
+<CodeTabs
+  title="Advanced Function Examples"
+  data={[
+    {
+      label: "Python",
+      language: "python",
+      code: `def advanced_function(name, age=25):
+    """
+    An advanced function with default parameters
+    """
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    
+    return f"Hello {name}, you are {age} years old!"
+
+# Usage examples
+print(advanced_function("Alice"))
+print(advanced_function("Bob", 30))`
+    },
+    {
+      label: "JavaScript",
+      language: "javascript",
+      code: `/**
+ * An advanced function with default parameters
+ */
+function advancedFunction(name, age = 25) {
+    if (age < 0) {
+        throw new Error("Age cannot be negative");
+    }
+    
+    return \`Hello \${name}, you are \${age} years old!\`;
+}
+
+// Usage examples
+console.log(advancedFunction("Alice"));
+console.log(advancedFunction("Bob", 30));`
+    },
+    {
+      label: "TypeScript",
+      language: "typescript", 
+      code: `/**
+ * An advanced function with default parameters and type safety
+ */
+function advancedFunction(name: string, age: number = 25): string {
+    if (age < 0) {
+        throw new Error("Age cannot be negative");
+    }
+    
+    return \`Hello \${name}, you are \${age} years old!\`;
+}
+
+// Usage examples
+console.log(advancedFunction("Alice"));
+console.log(advancedFunction("Bob", 30));`
+    }
+  ]}
+/>
+
+## Multiple Language Support
+
+Here's a chatbot example in multiple languages:
+
+<QuickCodeTabs
+  title="Simple Chatbot Implementation"
+  python={`import random
+
+class SimpleChatbot:
+    def __init__(self):
+        self.responses = {
+            "hello": ["Hi there!", "Hello!", "Hey!"],
+            "how are you": ["I'm good, thanks!", "Doing well!", "Great!"],
+            "bye": ["Goodbye!", "See you later!", "Bye!"]
+        }
+    
+    def get_response(self, user_input):
+        user_input = user_input.lower().strip()
+        
+        for key in self.responses:
+            if key in user_input:
+                return random.choice(self.responses[key])
+        
+        return "I don't understand that."
+
+# Usage
+bot = SimpleChatbot()
+response = bot.get_response("hello")
+print(response)`}
+  javascript={`class SimpleChatbot {
+    constructor() {
+        this.responses = {
+            "hello": ["Hi there!", "Hello!", "Hey!"],
+            "how are you": ["I'm good, thanks!", "Doing well!", "Great!"],
+            "bye": ["Goodbye!", "See you later!", "Bye!"]
+        };
+    }
+    
+    getResponse(userInput) {
+        userInput = userInput.toLowerCase().trim();
+        
+        for (const key in this.responses) {
+            if (userInput.includes(key)) {
+                const responses = this.responses[key];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+        }
+        
+        return "I don't understand that.";
+    }
+}
+
+// Usage
+const bot = new SimpleChatbot();
+const response = bot.getResponse("hello");
+console.log(response);`}
+  java={`import java.util.*;
+
+public class SimpleChatbot {
+    private Map<String, String[]> responses;
+    private Random random;
+    
+    public SimpleChatbot() {
+        this.random = new Random();
+        this.responses = new HashMap<>();
+        
+        responses.put("hello", new String[]{"Hi there!", "Hello!", "Hey!"});
+        responses.put("how are you", new String[]{"I'm good, thanks!", "Doing well!", "Great!"});
+        responses.put("bye", new String[]{"Goodbye!", "See you later!", "Bye!"});
+    }
+    
+    public String getResponse(String userInput) {
+        userInput = userInput.toLowerCase().trim();
+        
+        for (String key : responses.keySet()) {
+            if (userInput.contains(key)) {
+                String[] responseArray = responses.get(key);
+                return responseArray[random.nextInt(responseArray.length)];
+            }
+        }
+        
+        return "I don't understand that.";
+    }
+    
+    // Usage
+    public static void main(String[] args) {
+        SimpleChatbot bot = new SimpleChatbot();
+        String response = bot.getResponse("hello");
+        System.out.println(response);
+    }
+}`}
+/>
+
+```python
+def function():
+    print("name")
 ```
+
+Pretty cool, right? Now your readers can easily switch between different programming languages!

@@ -7,6 +7,8 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import { readFile } from 'node:fs/promises';
+// Import the CodeTabs components
+import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs"
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
 const theme = JSON.parse(
@@ -15,6 +17,13 @@ const theme = JSON.parse(
     'utf-8'
   )
 );
+
+// MDX Components available in your blog posts
+const mdxComponents = {
+  CodeTabs,
+  QuickCodeTabs,
+  // Add any other custom components you want to use in MDX
+};
 
 // Number of posts to show per page
 export const POSTS_PER_PAGE = 6;
@@ -111,6 +120,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 
   const { content } = await compileMDX({
     source: mdxSource,
+    components: mdxComponents, // Add the custom components
     options: {
       mdxOptions: {
         rehypePlugins: [
@@ -141,6 +151,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
   };
 }
 
+// Rest of your existing functions remain the same...
 export async function getAllPosts(includesDrafts = false): Promise<Post[]> {
   const slugs = getPostSlugs();
   const posts = await Promise.all(slugs.map((slug) => getPostBySlug(slug)));
