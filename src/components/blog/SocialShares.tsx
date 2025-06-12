@@ -29,7 +29,6 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
       name: "Twitter",
       icon: Twitter,
       url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`,
-      // Use --color-accent for hover
       color: "hover:text-[var(--color-accent)]"
     },
     {
@@ -40,7 +39,6 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
     }
   ];
 
-  // Mobile/Tablet version (horizontal)
   if (isMobile) {
     return (
       <div
@@ -58,7 +56,7 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
           </span>
         </div>
 
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-3">
           {shareLinks.map((link) => (
             <a
               key={link.name}
@@ -67,7 +65,7 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
               rel="noopener noreferrer"
               className={`
                 flex items-center justify-center
-                w-10 h-10 sm:w-12 sm:h-12
+                w-8 h-8 sm:w-10 sm:h-10
                 rounded-full
                 bg-[var(--color-surface)]
                 dark:bg-[var(--color-surface)]
@@ -78,7 +76,7 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
               `}
               aria-label={`Share on ${link.name}`}
             >
-              <link.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+              <link.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </a>
           ))}
 
@@ -86,7 +84,7 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
             onClick={handleCopyLink}
             className={`
               flex items-center justify-center
-              w-10 h-10 sm:w-12 sm:h-12
+              w-8 h-8 sm:w-10 sm:h-10
               rounded-full
               bg-[var(--color-surface)]
               dark:bg-[var(--color-surface)]
@@ -100,9 +98,9 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
             aria-label="Copy link"
           >
             {copied ? (
-              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             ) : (
-              <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             )}
           </button>
         </div>
@@ -118,7 +116,6 @@ export default function SocialShare({ shareUrl, title, isMobile }: SocialSharePr
     );
   }
 
-  // Desktop version (sticky vertical)
   return (
     <div className="sticky top-4">
       <div className="flex flex-col items-center space-y-3">
