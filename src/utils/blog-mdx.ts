@@ -6,6 +6,9 @@ import readingTime from 'reading-time';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
+// Math support
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { readFile } from 'node:fs/promises';
 // Import the CodeTabs components
 import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs"
@@ -120,14 +123,16 @@ export async function getPostBySlug(slug: string): Promise<Post> {
 
   const { content } = await compileMDX({
     source: mdxSource,
-    components: mdxComponents, // Add the custom components
+    components: mdxComponents,
     options: {
       mdxOptions: {
+        // Math plugin for inline and block math
+        remarkPlugins: [remarkMath],
+        // Rehype plugins: slug, syntax highlighting, and KaTeX rendering
         rehypePlugins: [
-          // Add rehype-slug to automatically generate IDs for headings
           rehypeSlug,
-          // Keep your existing pretty code plugin
           [rehypePrettyCode, prettyCodeOptions],
+          rehypeKatex,
         ],
       },
     },
