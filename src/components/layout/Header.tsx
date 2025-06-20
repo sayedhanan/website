@@ -6,7 +6,7 @@ import { RightNav } from '@/components/layout/RightNav';
 
 export function Header() {
   return (
-    <header className="w-full bg-[--color-surface] shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-[--color-surface] shadow-sm">
       <div
         className="
           mx-auto max-w-7xl px-4 py-3
