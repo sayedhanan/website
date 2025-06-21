@@ -6,4 +6,5 @@
    @import "./theme/_base.css";
    @import "./theme/_components.css";
    @import "./theme/_utilities.css";
+   @import "./theme/_newsletter.css";
    
