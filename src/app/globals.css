@@ -3,6 +3,7 @@
 
 /* 2. Tailwind & theme imports */
 @import "tailwindcss";
+@import 'katex/dist/katex.min.css';
 @import "../styles/theme.css";
 
 /* 3. Layer declarations */
