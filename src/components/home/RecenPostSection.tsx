@@ -30,9 +30,11 @@ export default async function RecentPostsSection() {
             excerpt={post.abstract}
             date={post.date}
             readingTime={post.readingTime}
+            categories={post.categories}
           />
         ))}
       </div>
     </section>
   );
 }
+
