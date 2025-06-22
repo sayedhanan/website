@@ -1,0 +1,26 @@
+{
+    "title": "Supervised Learning",
+    "order": 1,
+    "description": "Techniques and approaches for supervised machine learning",
+    "children": [
+      {
+        "slug": "linear-regression",
+        "title": "Linear Regression",
+        "order": 1,
+        "description": "A simple approach for predicting continuous values"
+      },
+      {
+        "slug": "decision-trees",
+        "title": "Decision Trees",
+        "order": 2,
+        "description": "A tree-like model used for classification and regression"
+      },
+      {
+        "slug": "neural-networks",
+        "title": "Neural Networks",
+        "order": 3,
+        "description": "A model inspired by the human brain, used for complex pattern recognition"
+      }
+    ]
+  }
+  
