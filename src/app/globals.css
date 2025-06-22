@@ -132,3 +132,17 @@ article h2,
 article h3 {
   scroll-margin-top: 100px; /* match your sticky header height */
 }
+
+
+/* 404 Page */
+/* app/globals.css */
+@keyframes float {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+
+.animate-float {
+  animation: float 7s linear infinite;
+}
