@@ -14,6 +14,7 @@
 
 /* 5. Base layer */
 @layer base {
+
   *,
   *::before,
   *::after {
@@ -40,7 +41,8 @@
   [data-rehype-pretty-code-fragment] pre {
     overflow-x: auto;
     padding: 1rem;
-    background-color: #1e1e1e !important; /* locked to dark */
+    background-color: #1e1e1e !important;
+    /* locked to dark */
     border-radius: 0.5rem;
   }
 
@@ -67,12 +69,10 @@
     color: inherit;
   }
 
-  .prose :where(
-    h1, h2, h3, h4, h5, h6,
+  .prose :where(h1, h2, h3, h4, h5, h6,
     p, blockquote, strong, code, pre, a,
     ol>li::before, ul>li::before,
-    thead th, tbody td
-  ) {
+    thead th, tbody td) {
     color: inherit;
   }
 
@@ -89,13 +89,15 @@
     padding: 1rem;
     border-radius: 0.5rem;
     overflow-x: auto;
-    background-color: #1e1e1e !important; /* locked to dark */
+    background-color: #1e1e1e !important;
+    /* locked to dark */
   }
 
   .prose code {
     font-family: ui-monospace, monospace;
     font-size: 0.875rem;
-    color: var(--color-surface); /* ensure code text is readable on dark background */
+    color: var(--color-surface);
+    /* ensure code text is readable on dark background */
   }
 
   /* Scrollbar styling: still tokenized so light/dark tokens apply to track/thumb as before */
@@ -130,19 +132,54 @@
 
 article h2,
 article h3 {
-  scroll-margin-top: 100px; /* match your sticky header height */
+  scroll-margin-top: 100px;
+  /* match your sticky header height */
 }
 
 
 /* 404 Page */
 /* app/globals.css */
 @keyframes float {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100px); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
 }
 
 .animate-float {
   animation: float 7s linear infinite;
+}
+
+
+/* Terminal */
+.output {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.error {
+  color: #ef4444;
+}
+
+.command {
+  color: #22d3ee;
+  font-weight: bold;
+}
+
+.prompt {
+  color: #22c55e;
+  font-weight: bold;
 }
