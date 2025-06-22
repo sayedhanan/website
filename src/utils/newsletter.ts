@@ -10,6 +10,7 @@ export interface NewsletterMeta {
   date: string
   substackUrl: string
   tags: string[]
+  categories: string[]
   readTime: string
 }
 
