@@ -3,10 +3,38 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
+// Math support
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { readFile } from 'node:fs/promises';
 import type { ReactNode } from 'react';
+// Import the CodeTabs components
+import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs"
 
 /** Root folder for all your .mdx notes */
 const NOTES_CONTENT_PATH = path.join(process.cwd(), 'src', 'content', 'notes');
+
+// Load theme for syntax highlighting
+let theme: any;
+try {
+  const themeFile = await readFile(
+    path.join(process.cwd(), 'src', 'themes', 'one-dark-pro.json'),
+    'utf-8'
+  );
+  theme = JSON.parse(themeFile);
+} catch (error) {
+  console.warn('Could not load theme file, using default theme');
+  theme = 'github-dark';
+}
+
+// MDX Components available in your notes
+const mdxComponents = {
+  CodeTabs,
+  QuickCodeTabs,
+  // Add any other custom components you want to use in MDX
+};
 
 // Ensure content path exists
 if (typeof window === 'undefined' && !fs.existsSync(NOTES_CONTENT_PATH)) {
@@ -404,10 +432,42 @@ export async function getNoteBySlug(
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { content: mdxBody, data } = matter(raw);
 
-  // Compile MDX
+  // Configure rehype-pretty-code options
+  const prettyCodeOptions = {
+    theme,
+    defaultLang: 'plaintext',
+    keepBackground: false,
+    onVisitLine(node: { children: unknown[]; properties: { className?: string[] } }) {
+      if (node.children.length === 0) {
+        node.children = [{ type: 'text', value: ' ' }];
+      }
+      node.properties.className = ['line'];
+    },
+    onVisitHighlightedLine(node: { properties: { className: string[] } }) {
+      node.properties.className.push('highlight-line');
+    },
+    onVisitHighlightedWord(node: { properties: { className: string[] } }) {
+      node.properties.className = ['word'];
+    },
+  };
+
+  // Compile MDX with the same plugins as blog
   const compiled = await compileMDX({
     source: mdxBody,
-    options: { parseFrontmatter: false },
+    components: mdxComponents, // Add the components here
+    options: {
+      parseFrontmatter: false,
+      mdxOptions: {
+        // Math plugin for inline and block math
+        remarkPlugins: [remarkMath],
+        // Rehype plugins: slug, syntax highlighting, and KaTeX rendering
+        rehypePlugins: [
+          rehypeSlug,
+          [rehypePrettyCode, prettyCodeOptions],
+          rehypeKatex,
+        ],
+      },
+    },
   });
 
   return {

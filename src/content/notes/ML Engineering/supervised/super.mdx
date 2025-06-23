@@ -1,0 +1,209 @@
+---
+title: del me
+description: Techniques for categorizing data into predefined classes
+---
+
+# My First MDX Post
+
+Welcome to my first MDX blog post! This is a demonstration of how MDX works with mathematical notation using LaTeX syntax.
+
+## Introduction
+
+MDX combines the power of Markdown with JSX components, making it perfect for technical writing and documentation. Today we're testing the mathematical rendering capabilities.
+
+## Mathematical Examples
+
+### Inline Math
+
+Here's the famous Pythagorean theorem written inline: $a^2 + b^2 = c^2$
+
+We can also write Einstein's mass-energy equivalence: $E = mc^2$
+
+And here's a simple quadratic formula: $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$
+
+### Block Math
+
+Let's showcase some beautiful mathematical expressions in display mode:
+
+**Euler's Identity** - often called the most beautiful equation in mathematics:
+
+$$
+e^{i\pi} + 1 = 0
+$$
+
+**The Fundamental Theorem of Calculus**:
+
+$$
+\int_a^b f'(x) \, dx = f(b) - f(a)
+$$
+
+**Maxwell's Equations** - the foundation of electromagnetism:
+
+$$
+\begin{align}
+\nabla \cdot \mathbf{E} &= \frac{\rho}{\epsilon_0} \\
+\nabla \cdot \mathbf{B} &= 0 \\
+\nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &= \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}
+\end{align}
+$$
+
+**The Schrödinger Equation**:
+
+$$
+i\hbar\frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat{H}\Psi(\mathbf{r},t)
+$$
+
+### Complex Mathematical Expressions
+
+**Fourier Transform**:
+
+$$
+\mathcal{F}\{f(t)\} = F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} \, dt
+$$
+
+**Gaussian Distribution**:
+
+$$
+f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}
+$$
+
+**Matrix Operations**:
+
+$$
+\mathbf{A} = \begin{pmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{pmatrix}
+$$
+
+## Testing Different Notation Styles
+
+### Greek Letters and Symbols
+
+Here are some commonly used mathematical symbols:
+
+- Greek letters: $\alpha, \beta, \gamma, \delta, \epsilon, \zeta, \eta, \theta, \lambda, \mu, \pi, \rho, \sigma, \tau, \phi, \chi, \psi, \omega$
+- Special symbols: $\infty, \partial, \nabla, \sum, \prod, \int, \oint$
+- Relations: $\leq, \geq, \neq, \approx, \equiv, \propto$
+
+### Fractions and Roots
+
+Inline fractions: $\frac{1}{2}$, $\frac{x+1}{x-1}$, $\sqrt{x}$, $\sqrt[3]{8}$
+
+Display fractions:
+
+$$
+\frac{d}{dx}\left(\frac{x^2 + 1}{x^3 - 2x}\right) = \frac{(2x)(x^3 - 2x) - (x^2 + 1)(3x^2 - 2)}{(x^3 - 2x)^2}
+$$
+
+### Summations and Products
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
+$$
+
+$$
+\prod_{n=1}^{k} n = k!
+$$
+
+## Conclusion
+
+This MDX post demonstrates various LaTeX mathematical expressions, from simple inline equations to complex display formulas. The rendering should handle:
+
+- Basic algebraic expressions
+- Calculus notation
+- Linear algebra
+- Greek letters and special symbols
+- Fractions, roots, and exponents
+- Summations and products
+- Multi-line equations
+
+If you can see all the mathematical expressions rendered correctly, then your MDX LaTeX setup is working perfectly!
+
+
+## Code Block Example
+
+
+Instead of separate code blocks, let's use tabbed code blocks:
+
+<QuickCodeTabs
+  python={`def hello_world():
+    print("Hello, World!")
+    return "Hello from Python!"
+
+# Call the function
+message = hello_world()
+print(message)`}
+  javascript={`// This is a comment
+function helloWorld() {
+  const greeting = "Hello, World!";
+  console.log(greeting);
+  return greeting;
+}
+
+// Call the function
+const message = helloWorld();
+console.log(message);`}
+/>
+
+You can also use the more flexible CodeTabs component:
+
+<CodeTabs
+  data={[
+    {
+      label: "Python",
+      language: "python",
+      code: `def advanced_function(name, age=25):
+    """
+    An advanced function with default parameters
+    """
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    
+    return f"Hello {name}, you are {age} years old!"
+
+# Usage examples
+print(advanced_function("Alice"))
+print(advanced_function("Bob", 30))`
+    },
+    {
+      label: "JavaScript",
+      language: "javascript",
+      code: `/**
+ * An advanced function with default parameters
+ */
+function advancedFunction(name, age = 25) {
+    if (age < 0) {
+        throw new Error("Age cannot be negative");
+    }
+    
+    return \`Hello \${name}, you are \${age} years old!\`;
+}
+
+// Usage examples
+console.log(advancedFunction("Alice"));
+console.log(advancedFunction("Bob", 30));`
+    },
+    {
+      label: "TypeScript",
+      language: "typescript", 
+      code: `/**
+ * An advanced function with default parameters and type safety
+ */
+function advancedFunction(name: string, age: number = 25): string {
+    if (age < 0) {
+        throw new Error("Age cannot be negative");
+    }
+    
+    return \`Hello \${name}, you are \${age} years old!\`;
+}
+
+// Usage examples
+console.log(advancedFunction("Alice"));
+console.log(advancedFunction("Bob", 30));`
+    }
+  ]}
+/>
