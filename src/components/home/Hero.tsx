@@ -1,4 +1,3 @@
-// app/components/home/Hero.tsx
 'use client';
 
 import { cn } from '@/utils/cn';
@@ -109,7 +108,7 @@ export default function Hero() {
             'text-[var(--color-primary-text)]'
           )}
         >
-          Hi, I’m Sayed Hanan.
+          Hi, I&rsquo;m Sayed Hanan.
           <br />
           <AnimatedText
             words={animatedWords}
@@ -124,9 +123,9 @@ export default function Hero() {
             'max-w-2xl'
           )}
         >
-          I'm studying software engineering and fascinated
+          I&rsquo;m studying software engineering and fascinated
           by AI. This is where I share my experiments, mistakes, and occasional
-          wins. If you're also learning, maybe we can figure things out
+          wins. If you&rsquo;re also learning, maybe we can figure things out
           together.
         </p>
 

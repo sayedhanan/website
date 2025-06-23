@@ -16,15 +16,18 @@ import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs"
 /** Root folder for all your .mdx notes */
 const NOTES_CONTENT_PATH = path.join(process.cwd(), 'src', 'content', 'notes');
 
+// Define theme type for better type safety
+type Theme = string | Record<string, unknown>;
+
 // Load theme for syntax highlighting
-let theme: any;
+let theme: Theme;
 try {
   const themeFile = await readFile(
     path.join(process.cwd(), 'src', 'themes', 'one-dark-pro.json'),
     'utf-8'
   );
-  theme = JSON.parse(themeFile);
-} catch (error) {
+  theme = JSON.parse(themeFile) as Record<string, unknown>;
+} catch {
   console.warn('Could not load theme file, using default theme');
   theme = 'github-dark';
 }
@@ -49,12 +52,20 @@ if (typeof window === 'undefined' && !fs.existsSync(NOTES_CONTENT_PATH)) {
 /** URL slug parts, e.g. ['ml-engineering','supervised'] */
 export type Slug = string[];
 
+/** Frontmatter structure */
+export interface Frontmatter {
+  title?: string;
+  description?: string;
+  order?: number;
+  [key: string]: unknown;
+}
+
 /** What getNoteBySlug returns */
 export interface LoadedNote {
   /** The rendered MDX as a React node */
   content: ReactNode;
   /** Your front-matter fields (title, description, order, etc.) */
-  frontmatter: Record<string, any>;
+  frontmatter: Frontmatter;
 }
 
 /** Tree structure for sidebar/navigation */
@@ -109,14 +120,14 @@ interface FolderMeta {
 function readFolderMeta(dirPath: string): FolderMeta | null {
   const metaFile = path.join(dirPath, '_meta.json');
   if (!fs.existsSync(metaFile)) return null;
-  return JSON.parse(fs.readFileSync(metaFile, 'utf-8'));
+  return JSON.parse(fs.readFileSync(metaFile, 'utf-8')) as FolderMeta;
 }
 
 /** Read just the front-matter from an MDX file */
-function readMDXFrontmatter(filePath: string): Record<string, any> {
+function readMDXFrontmatter(filePath: string): Frontmatter {
   if (!fs.existsSync(filePath)) return {};
   const src = fs.readFileSync(filePath, 'utf-8');
-  return matter(src).data as Record<string, any>;
+  return matter(src).data as Frontmatter;
 }
 
 /**
@@ -240,9 +251,9 @@ export function getNotesTree(): NoteNode[] {
  */
 export function getAllNotes(): {
   slug: string[];
-  frontmatter: Record<string, any>;
+  frontmatter: Frontmatter;
 }[] {
-  const notes: { slug: string[]; frontmatter: Record<string, any> }[] = [];
+  const notes: { slug: string[]; frontmatter: Frontmatter }[] = [];
 
   function traverse(dir: string, slugParts: string[] = []) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -476,7 +487,7 @@ export async function getNoteBySlug(
       ...data,
       // Ensure title exists
       title: data.title || slugArr[slugArr.length - 1] || 'Untitled',
-    },
+    } as Frontmatter,
   };
 }
 

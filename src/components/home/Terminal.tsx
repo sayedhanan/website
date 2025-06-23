@@ -111,7 +111,7 @@ const useTerminal = () => {
   useEffect(() => {
     setLines([
       <div key="welcome" className="mb-2">
-        Welcome to Interactive Portfolio Terminal v2.0<br />
+        Hi, I’m Hanan, this terminal is your guide. Type a command to begin.<br />
         Type <span className="text-cyan-400 font-semibold">help</span> for available commands
       </div>
     ]);
@@ -315,7 +315,7 @@ export default function Terminal() {
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div className="w-3 h-3 rounded-full bg-green-500"></div>
           <div className="text-sm text-gray-400 ml-2">
-            {mode === 'terminal' ? 'portfolio-terminal v2.0' : 'ai-assistant v1.0'}
+            {mode === 'terminal' ? 'Terminal' : 'Ai-Assistant'}
           </div>
         </div>
         <button

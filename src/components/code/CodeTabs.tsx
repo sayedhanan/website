@@ -366,7 +366,7 @@ export function QuickCodeTabs({ title, ...languages }: QuickCodeTabsProps) {
   };
 
   const data = Object.entries(languages)
-    .filter(([_, code]) => code && code.trim())
+    .filter(([, code]) => code && code.trim())
     .map(([lang, code]) => ({
       label: languageLabels[lang] || lang,
       language: languageMapping[lang] || lang,

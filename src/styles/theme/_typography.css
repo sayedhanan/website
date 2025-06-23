@@ -3,8 +3,12 @@
    - Tailwind will generate utilities like text-[var(--typography-lg)] if needed,
      though in most cases you’ll still rely on the native `text-lg`, etc. */
      @theme {
-      --font-heading:        system-ui, sans-serif;
-      --font-body:           system-ui, sans-serif;
+      /* --font-heading:        system-ui, sans-serif;
+      --font-body:           system-ui, sans-serif; */
+
+      --font-heading: 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+
     
       /* Font‐size scale (for custom utilities, if used) */
       --typography-xs:       0.75rem;  /* 12px */

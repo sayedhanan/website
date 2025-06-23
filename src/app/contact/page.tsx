@@ -11,9 +11,9 @@ export default function ContactPage() {
       <div className="w-full max-w-2xl space-y-12">
         {/* Intro */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Let’s Get In Touch</h1>
+          <h1 className="text-4xl font-bold">Let&rsquo;s Get In Touch</h1>
           <p className="text-lg text-[var(--color-secondary-text)]">
-            Drop me a line or connect on social, I'd love to hear from you!
+            Drop me a line or connect on social, I&apos;d love to hear from you!
           </p>
         </div>
 

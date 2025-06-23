@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 interface Route {
   path: string;
@@ -27,7 +27,6 @@ interface TrainingPhase {
 
 export default function NotFound() {
   const [isTraining, setIsTraining] = useState(false);
-  const [currentEpoch, setCurrentEpoch] = useState(0);
   const [currentPhase, setCurrentPhase] = useState(0);
   const [predictions, setPredictions] = useState<Route[]>([]);
   const [modelMetrics, setModelMetrics] = useState<ModelMetrics>({ 
@@ -42,7 +41,7 @@ export default function NotFound() {
   const [trainingStartTime, setTrainingStartTime] = useState(0);
   const [currentUrl, setCurrentUrl] = useState('/unknown');
 
-  const availableRoutes: Route[] = [
+  const availableRoutes = useMemo<Route[]>(() => [
     { 
       path: '/', 
       name: 'Home', 
@@ -78,9 +77,9 @@ export default function NotFound() {
       confidence: 0,
       tags: ['projects', 'portfolio', 'ai', 'experiments']
     }
-  ];
+  ], []);
 
-  const trainingPhases: TrainingPhase[] = [
+  const trainingPhases = useMemo<TrainingPhase[]>(() => [
     { name: "Initializing neural architecture", duration: 1000, color: "text-blue-400" },
     { name: "Loading route embeddings", duration: 800, color: "text-purple-400" },
     { name: "Computing similarity vectors", duration: 1200, color: "text-yellow-400" },
@@ -88,7 +87,7 @@ export default function NotFound() {
     { name: "Fine-tuning parameters", duration: 1000, color: "text-cyan-400" },
     { name: "Validating model performance", duration: 800, color: "text-pink-400" },
     { name: "Generating predictions", duration: 600, color: "text-orange-400" }
-  ];
+  ], []);
 
   // Get current URL on client side
   useEffect(() => {
@@ -96,6 +95,39 @@ export default function NotFound() {
       setCurrentUrl(window.location.pathname);
     }
   }, []);
+
+  // Smart prediction generation based on URL patterns
+  const generateSmartPredictions = useCallback((url: string): Route[] => {
+    const urlLower = url.toLowerCase();
+    
+    return availableRoutes.map(route => {
+      let confidence = 0.7 + Math.random() * 0.25; // Base confidence
+      
+      // Boost confidence based on URL similarity
+      if (urlLower.includes('blog') || urlLower.includes('article') || urlLower.includes('post')) {
+        if (route.path.includes('blog')) confidence = Math.min(0.98, confidence + 0.2);
+        if (route.path.includes('notes')) confidence = Math.min(0.95, confidence + 0.15);
+      }
+      
+      if (urlLower.includes('project') || urlLower.includes('work') || urlLower.includes('portfolio')) {
+        if (route.path.includes('project')) confidence = Math.min(0.98, confidence + 0.2);
+        if (route.path === '/') confidence = Math.min(0.92, confidence + 0.1);
+      }
+      
+      if (urlLower.includes('about') || urlLower.includes('me') || urlLower.includes('bio')) {
+        if (route.path === '/') confidence = Math.min(0.98, confidence + 0.25);
+      }
+      
+      // Tag-based similarity boost
+      route.tags.forEach(tag => {
+        if (urlLower.includes(tag)) {
+          confidence = Math.min(0.98, confidence + 0.1);
+        }
+      });
+      
+      return { ...route, confidence };
+    }).sort((a, b) => b.confidence - a.confidence);
+  }, [availableRoutes]);
 
   // Enhanced training simulation with realistic phases
   useEffect(() => {
@@ -139,45 +171,11 @@ export default function NotFound() {
 
       return () => clearTimeout(timeout);
     }
-  }, [isTraining, currentPhase, trainingStartTime, currentUrl]);
-
-  // Smart prediction generation based on URL patterns
-  const generateSmartPredictions = useCallback((url: string): Route[] => {
-    const urlLower = url.toLowerCase();
-    
-    return availableRoutes.map(route => {
-      let confidence = 0.7 + Math.random() * 0.25; // Base confidence
-      
-      // Boost confidence based on URL similarity
-      if (urlLower.includes('blog') || urlLower.includes('article') || urlLower.includes('post')) {
-        if (route.path.includes('blog')) confidence = Math.min(0.98, confidence + 0.2);
-        if (route.path.includes('notes')) confidence = Math.min(0.95, confidence + 0.15);
-      }
-      
-      if (urlLower.includes('project') || urlLower.includes('work') || urlLower.includes('portfolio')) {
-        if (route.path.includes('project')) confidence = Math.min(0.98, confidence + 0.2);
-        if (route.path === '/') confidence = Math.min(0.92, confidence + 0.1);
-      }
-      
-      if (urlLower.includes('about') || urlLower.includes('me') || urlLower.includes('bio')) {
-        if (route.path === '/') confidence = Math.min(0.98, confidence + 0.25);
-      }
-      
-      // Tag-based similarity boost
-      route.tags.forEach(tag => {
-        if (urlLower.includes(tag)) {
-          confidence = Math.min(0.98, confidence + 0.1);
-        }
-      });
-      
-      return { ...route, confidence };
-    }).sort((a, b) => b.confidence - a.confidence);
-  }, []);
+  }, [isTraining, currentPhase, trainingStartTime, currentUrl, generateSmartPredictions, trainingPhases]);
 
   const startTraining = () => {
     setIsTraining(true);
     setCurrentPhase(0);
-    setCurrentEpoch(0);
     setPredictions([]);
     setTrainingComplete(false);
     setTrainingStartTime(Date.now());
@@ -192,7 +190,6 @@ export default function NotFound() {
   const resetModel = () => {
     setIsTraining(false);
     setCurrentPhase(0);
-    setCurrentEpoch(0);
     setPredictions([]);
     setTrainingComplete(false);
     setModelMetrics({ accuracy: 0, loss: 1.0, epochs: 0, learningRate: 0.001, trainingTime: 0 });
@@ -254,10 +251,10 @@ export default function NotFound() {
                 <span className="text-gray-500">Traceback (most recent call last):</span>
               </div>
               <div className="text-red-400 mb-1">
-                <span className="text-gray-500">  File "semantic_router.py", line 127, in resolve_route</span>
+                <span className="text-gray-500">  File &quot;semantic_router.py&quot;, line 127, in resolve_route</span>
               </div>
               <div className="text-red-400 bg-red-900 bg-opacity-30 px-3 py-1 rounded mb-3">
-                RouteNotFoundException: No semantic match found for "{currentUrl}"
+                RouteNotFoundException: No semantic match found for &quot;{currentUrl}&quot;
               </div>
               <div className="text-yellow-400 flex items-center">
                 <span className="mr-2">💡</span>
@@ -379,7 +376,7 @@ export default function NotFound() {
                   <div className="text-gray-500 italic text-center py-8">
                     <div className="text-2xl mb-2">🤖</div>
                     <div>Neural network ready for training</div>
-                    <div className="text-sm mt-1">Click "Train Model" to start AI-powered route discovery</div>
+                    <div className="text-sm mt-1">Click &quot;Train Model&quot; to start AI-powered route discovery</div>
                   </div>
                 ) : (
                   debugLog.map((line, index) => (
@@ -437,7 +434,7 @@ export default function NotFound() {
                 <div className="space-y-3">
                   <div className="text-sm text-[var(--color-secondary-text)] mb-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded p-3">
                     <div className="flex items-center justify-between">
-                      <span>Routes ranked by semantic similarity to "{currentUrl}"</span>
+                      <span>Routes ranked by semantic similarity to &quot;{currentUrl}&quot;</span>
                       <span className="text-xs text-[var(--color-info)]">Confidence Score</span>
                     </div>
                   </div>
