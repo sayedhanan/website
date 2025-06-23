@@ -28,9 +28,19 @@ export function Footer() {
           ))}
         </nav>
 
+        {/* Privacy link - smaller, muted */}
+        <div className="text-xs text-[--color-secondary-text]">
+          <Link
+            href="/privacy-policy"
+            className="hover:text-[--color-accent] underline"
+          >
+            Privacy Policy
+          </Link>
+        </div>
+
         {/* Copyright */}
         <div>
-          © {new Date().getFullYear()} DeepSeek. All rights reserved.
+          © {new Date().getFullYear()} Sayed Hanan. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,9 +1,11 @@
-'use client';
-
+// src/app/layout.tsx
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { metadata } from '@/constants/metadata';
+
+export { metadata };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,4 +20,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

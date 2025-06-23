@@ -1,15 +1,16 @@
-// src/app/blog/page.tsx
 import { getPaginatedPosts, getAllCategories } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import { CategoryNav } from '@/components/blog/CategoryNav';
 import Pagination from '@/components/blog/Pagination';
+import { metadata } from './metadata';
+
+export { metadata };
 
 interface BlogPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  // Await searchParams before using
   const { page } = await searchParams;
   const currentPage = page ? parseInt(page, 10) : 1;
 

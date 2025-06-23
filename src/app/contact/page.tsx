@@ -1,8 +1,9 @@
-'use client';
-
 import React from 'react';
 import { cn } from '@/utils/cn';
 import { socialLinks } from '@/constants/social-links';
+import { metadata } from './metadata';
+
+export { metadata };
 
 export default function ContactPage() {
   return (
