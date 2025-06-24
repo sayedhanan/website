@@ -1,3 +1,5 @@
+// File: src/components/blog/BlogGrid.tsx
+
 import { getPostSlugs, getPostBySlug } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import Pagination from '@/components/blog/Pagination';
@@ -36,6 +38,7 @@ export default function BlogGrid(props: BlogGridProps) {
   return (
     <section className="section-wrapper section-spacing">
       <h1 className="text-4xl font-semibold mb-6">All Posts</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
           <ArticleCard
@@ -48,7 +51,16 @@ export default function BlogGrid(props: BlogGridProps) {
           />
         ))}
       </div>
-      <Pagination currentPage={pageNumber} totalPages={totalPages} />
+
+      <Pagination
+        currentPage={pageNumber}
+        totalPages={totalPages}
+        basePath="/blog"
+        onPageChange={() => {
+          // scroll back to top on page change
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
     </section>
   );
 }

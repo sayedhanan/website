@@ -29,7 +29,7 @@ const mdxComponents = {
 };
 
 // Number of posts to show per page
-export const POSTS_PER_PAGE = 6;
+export const POSTS_PER_PAGE = 3;
 
 export interface TOCItem {
   id: string;

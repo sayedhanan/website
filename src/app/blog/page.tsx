@@ -1,10 +1,9 @@
-// File: app/blog/page.tsx
-export const dynamic = 'force-dynamic';
+// File: src/app/blog/page.tsx
 
-import { getPaginatedPosts, getAllCategories } from '@/utils/blog-mdx';
-import ArticleCard from '@/components/ui/article-card';
+import { getAllCategories, getAllPosts, POSTS_PER_PAGE } from '@/utils/blog-mdx';
 import { CategoryNav } from '@/components/blog/CategoryNav';
-import Pagination from '@/components/blog/Pagination';
+import BlogPostsList from '@/components/blog/BlogPostsList';
+import { Suspense } from 'react';
 import { metadata } from './metadata';
 
 export { metadata };
@@ -13,35 +12,51 @@ interface BlogPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
-  // ✏️ await the searchParams object
+// Generate static params for pagination
+export async function generateStaticParams() {
+  const allPosts = await getAllPosts();
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  
+  return Array.from({ length: totalPages }, (_, i) => ({
+    page: (i + 1).toString(),
+  }));
+}
+
+async function BlogContent({ searchParams }: BlogPageProps) {
   const { page } = await searchParams;
   const currentPage = page ? parseInt(page, 10) : 1;
 
-  const { posts, totalPages } = await getPaginatedPosts(currentPage);
+  const allPosts = await getAllPosts();
   const categories = await getAllCategories();
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
   return (
     <section className="section-wrapper section-spacing">
-      <h1 className="text-3xl font-bold mb-6">Blog</h1>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Blog</h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Thoughts, tutorials, and insights on development
+        </p>
+      </div>
 
       <CategoryNav categories={categories} />
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
-          <ArticleCard
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            title={post.title}
-            excerpt={post.abstract}
-            date={post.date}
-            readingTime={post.readingTime}
-            categories={post.categories}
-          />
-        ))}
-      </div>
-
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
+      <BlogPostsList
+        posts={allPosts}
+        postsPerPage={POSTS_PER_PAGE}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/blog"
+        showPostCount={true}
+      />
     </section>
+  );
+}
+
+export default function BlogPage({ searchParams }: BlogPageProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlogContent searchParams={searchParams} />
+    </Suspense>
   );
 }
