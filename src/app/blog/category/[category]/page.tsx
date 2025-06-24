@@ -1,50 +1,38 @@
+// File: app/blog/category/[category]/page.tsx
+export const dynamic = 'force-dynamic';
+
 import { getAllCategories, getPaginatedPostsByCategory } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import { CategoryNav } from '@/components/blog/CategoryNav';
 import Pagination from '@/components/blog/Pagination';
 import { notFound } from 'next/navigation';
 
-export async function generateStaticParams() {
-  const categories = await getAllCategories();
-  return categories.map((category) => ({
-    category: category.toLowerCase(),
-  }));
-}
-
-export default async function CategoryPage({
-  params,
-  searchParams,
-}: {
+interface CategoryPageProps {
   params: Promise<{ category: string }>;
   searchParams: Promise<{ page?: string }>;
-}) {
-  // Await both params and searchParams
+}
+
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  // ✏️ await both before use
   const { category } = await params;
   const { page } = await searchParams;
-  const currentPage = page ? parseInt(page, 10) : 1;
+
   const decodedCategory = decodeURIComponent(category);
-  
-  // Find the exact category with proper casing
   const allCategories = await getAllCategories();
   const exactCategory = allCategories.find(
     (cat) => cat.toLowerCase() === decodedCategory.toLowerCase()
   );
-  
-  if (!exactCategory) {
-    notFound();
-  }
-  
-  const { posts, totalPages } = await getPaginatedPostsByCategory(
-    exactCategory,
-    currentPage
-  );
-  
+  if (!exactCategory) notFound();
+
+  const currentPage = page ? parseInt(page, 10) : 1;
+  const { posts, totalPages } = await getPaginatedPostsByCategory(exactCategory, currentPage);
+
   return (
     <section className="section-wrapper section-spacing">
       <h1 className="text-3xl font-bold mb-6">Category: {exactCategory}</h1>
-      
+
       <CategoryNav categories={allCategories} />
-      
+
       {posts.length > 0 ? (
         <>
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -60,7 +48,7 @@ export default async function CategoryPage({
               />
             ))}
           </div>
-          
+
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

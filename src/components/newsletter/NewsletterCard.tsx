@@ -1,13 +1,30 @@
 import React from 'react';
 import { Calendar, ExternalLink, Clock } from 'lucide-react';
 
-const NewsletterCard = ({ newsletter, showTimeline = true }) => {
-  const formatDate = (dateString) => {
+// Define the shape of a newsletter item
+export interface Newsletter {
+  title: string;
+  date: string;
+  excerpt: string;
+  readTime: string;
+  tags: string[];
+  substackUrl: string;
+}
+
+// Props for the NewsletterCard component
+interface NewsletterCardProps {
+  newsletter: Newsletter;
+  showTimeline?: boolean;
+}
+
+const NewsletterCard: React.FC<NewsletterCardProps> = ({ newsletter, showTimeline = true }) => {
+  // Format a date string into a more readable format
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -34,9 +51,7 @@ const NewsletterCard = ({ newsletter, showTimeline = true }) => {
             </div>
           </div>
 
-          <p className="card-excerpt mb-4">
-            {newsletter.excerpt}
-          </p>
+          <p className="card-excerpt mb-4">{newsletter.excerpt}</p>
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -45,7 +60,7 @@ const NewsletterCard = ({ newsletter, showTimeline = true }) => {
                 {newsletter.readTime}
               </div>
               <div className="flex gap-2">
-                {newsletter.tags.map(tag => (
+                {newsletter.tags.map((tag: string) => (
                   <span
                     key={tag}
                     className="px-2 py-1 bg-[var(--color-background)] text-[var(--color-secondary-text)] text-xs rounded border border-[var(--color-border)]"

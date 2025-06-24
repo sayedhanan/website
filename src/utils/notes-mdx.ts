@@ -19,17 +19,18 @@ const NOTES_CONTENT_PATH = path.join(process.cwd(), 'src', 'content', 'notes');
 // Define theme type for better type safety
 type Theme = string | Record<string, unknown>;
 
-// Load theme for syntax highlighting
-let theme: Theme;
-try {
-  const themeFile = await readFile(
-    path.join(process.cwd(), 'src', 'themes', 'one-dark-pro.json'),
-    'utf-8'
-  );
-  theme = JSON.parse(themeFile) as Record<string, unknown>;
-} catch {
-  console.warn('Could not load theme file, using default theme');
-  theme = 'github-dark';
+// Load theme for syntax highlighting - make it a function for async loading
+async function loadTheme(): Promise<Theme> {
+  try {
+    const themeFile = await readFile(
+      path.join(process.cwd(), 'src', 'themes', 'one-dark-pro.json'),
+      'utf-8'
+    );
+    return JSON.parse(themeFile) as Record<string, unknown>;
+  } catch {
+    console.warn('Could not load theme file, using default theme');
+    return 'github-dark';
+  }
 }
 
 // MDX Components available in your notes
@@ -247,7 +248,7 @@ export function getNotesTree(): NoteNode[] {
 }
 
 /**
- * Get flat list of all available notes
+ * Get flat list of all available notes - Updated for SSG support
  */
 export function getAllNotes(): {
   slug: string[];
@@ -256,6 +257,8 @@ export function getAllNotes(): {
   const notes: { slug: string[]; frontmatter: Frontmatter }[] = [];
 
   function traverse(dir: string, slugParts: string[] = []) {
+    if (!fs.existsSync(dir)) return;
+    
     const entries = fs.readdirSync(dir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -282,6 +285,15 @@ export function getAllNotes(): {
   }
 
   return notes;
+}
+
+/**
+ * Get all possible slug combinations for SSG
+ * This function is specifically for generateStaticParams
+ */
+export function getAllNoteSlugs(): { slug: string[] }[] {
+  const allNotes = getAllNotes();
+  return allNotes.map(note => ({ slug: note.slug }));
 }
 
 /**
@@ -366,6 +378,7 @@ export function organizeNotesTree(): NoteNode[] {
 /**
  * Given a slug array, compile the matching .mdx file.
  * Returns `null` if file not found.
+ * Updated to use async theme loading
  */
 export async function getNoteBySlug(
   slugArr: Slug
@@ -442,6 +455,9 @@ export async function getNoteBySlug(
   // Read raw MDX
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { content: mdxBody, data } = matter(raw);
+
+  // Load theme asynchronously
+  const theme = await loadTheme();
 
   // Configure rehype-pretty-code options
   const prettyCodeOptions = {

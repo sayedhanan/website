@@ -1,3 +1,6 @@
+// File: app/blog/page.tsx
+export const dynamic = 'force-dynamic';
+
 import { getPaginatedPosts, getAllCategories } from '@/utils/blog-mdx';
 import ArticleCard from '@/components/ui/article-card';
 import { CategoryNav } from '@/components/blog/CategoryNav';
@@ -11,6 +14,7 @@ interface BlogPageProps {
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
+  // ✏️ await the searchParams object
   const { page } = await searchParams;
   const currentPage = page ? parseInt(page, 10) : 1;
 
