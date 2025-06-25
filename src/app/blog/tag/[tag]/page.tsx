@@ -1,9 +1,8 @@
-// File: app/blog/tag/[tag]/page.tsx (Updated)
-import { getAllTags, getPostsByTag, getAllCategories, POSTS_PER_PAGE } from '@/utils/blog-mdx';
+// File: app/blog/tag/[tag]/page.tsx
+import { getAllTags, getPostsByTag, getAllCategories } from '@/utils/blog-mdx';
 import { CategoryNav } from '@/components/blog/CategoryNav';
-import BlogPostsList from '@/components/blog/BlogPostsList';
+import LoadMoreButton from '@/components/blog/LoadMoreButton';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 
 export async function generateStaticParams() {
   const tags = await getAllTags();
@@ -14,13 +13,10 @@ export async function generateStaticParams() {
 
 interface TagPageProps {
   params: Promise<{ tag: string }>;
-  searchParams: Promise<{ page?: string }>;
 }
 
-async function TagContent({ params, searchParams }: TagPageProps) {
+export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params;
-  const { page } = await searchParams;
-  const currentPage = page ? parseInt(page, 10) : 1;
   const decodedTag = decodeURIComponent(tag);
   
   const allTags = await getAllTags();
@@ -34,7 +30,6 @@ async function TagContent({ params, searchParams }: TagPageProps) {
   
   const posts = await getPostsByTag(exactTag);
   const categories = await getAllCategories();
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
   
   return (
     <section className="section-wrapper section-spacing">
@@ -47,22 +42,10 @@ async function TagContent({ params, searchParams }: TagPageProps) {
       
       <CategoryNav categories={categories} />
       
-      <BlogPostsList
+      <LoadMoreButton 
         posts={posts}
-        postsPerPage={POSTS_PER_PAGE}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        basePath={`/blog/tag/${tag}`}
         showPostCount={true}
       />
     </section>
-  );
-}
-
-export default function TagPage({ params, searchParams }: TagPageProps) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <TagContent params={params} searchParams={searchParams} />
-    </Suspense>
   );
 }

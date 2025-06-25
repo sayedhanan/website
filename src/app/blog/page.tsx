@@ -1,34 +1,14 @@
-// File: src/app/blog/page.tsx
-
-import { getAllCategories, getAllPosts, POSTS_PER_PAGE } from '@/utils/blog-mdx';
+// File: app/blog/page.tsx
+import { getAllCategories, getAllPosts } from '@/utils/blog-mdx';
 import { CategoryNav } from '@/components/blog/CategoryNav';
-import BlogPostsList from '@/components/blog/BlogPostsList';
-import { Suspense } from 'react';
+import LoadMoreButton from '@/components/blog/LoadMoreButton';
 import { metadata } from './metadata';
 
 export { metadata };
 
-interface BlogPageProps {
-  searchParams: Promise<{ page?: string }>;
-}
-
-// Generate static params for pagination
-export async function generateStaticParams() {
-  const allPosts = await getAllPosts();
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-  
-  return Array.from({ length: totalPages }, (_, i) => ({
-    page: (i + 1).toString(),
-  }));
-}
-
-async function BlogContent({ searchParams }: BlogPageProps) {
-  const { page } = await searchParams;
-  const currentPage = page ? parseInt(page, 10) : 1;
-
+export default async function BlogPage() {
   const allPosts = await getAllPosts();
   const categories = await getAllCategories();
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
   return (
     <section className="section-wrapper section-spacing">
@@ -41,22 +21,10 @@ async function BlogContent({ searchParams }: BlogPageProps) {
 
       <CategoryNav categories={categories} />
 
-      <BlogPostsList
+      <LoadMoreButton 
         posts={allPosts}
-        postsPerPage={POSTS_PER_PAGE}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        basePath="/blog"
         showPostCount={true}
       />
     </section>
-  );
-}
-
-export default function BlogPage({ searchParams }: BlogPageProps) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BlogContent searchParams={searchParams} />
-    </Suspense>
   );
 }

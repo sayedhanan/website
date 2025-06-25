@@ -1,4 +1,4 @@
-// src/utils/blog-mdx.ts
+// File: src/utils/blog-mdx.ts (Updated - Removed Pagination Functions)
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -11,7 +11,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { readFile } from 'node:fs/promises';
 // Import the CodeTabs components
-import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs"
+import CodeTabs, { QuickCodeTabs } from "@/components/code/CodeTabs";
 
 const postsDir = path.join(process.cwd(), 'src', 'content', 'blog');
 const theme = JSON.parse(
@@ -27,9 +27,6 @@ const mdxComponents = {
   QuickCodeTabs,
   // Add any other custom components you want to use in MDX
 };
-
-// Number of posts to show per page
-export const POSTS_PER_PAGE = 3;
 
 export interface TOCItem {
   id: string;
@@ -48,12 +45,6 @@ export interface Post {
   tags: string[];
   draft: boolean;
   toc: TOCItem[];
-}
-
-export interface PaginatedPosts {
-  posts: Post[];
-  currentPage: number;
-  totalPages: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -156,7 +147,6 @@ export async function getPostBySlug(slug: string): Promise<Post> {
   };
 }
 
-// Rest of your existing functions remain the same...
 export async function getAllPosts(includesDrafts = false): Promise<Post[]> {
   const slugs = getPostSlugs();
   const posts = await Promise.all(slugs.map((slug) => getPostBySlug(slug)));
@@ -166,26 +156,6 @@ export async function getAllPosts(includesDrafts = false): Promise<Post[]> {
   return filteredPosts.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
-}
-
-export async function getPaginatedPosts(
-  page = 1,
-  includesDrafts = false
-): Promise<PaginatedPosts> {
-  const allPosts = await getAllPosts(includesDrafts);
-  const totalPosts = allPosts.length;
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-
-  const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
-  const posts = allPosts.slice(startIndex, endIndex);
-
-  return {
-    posts,
-    currentPage,
-    totalPages,
-  };
 }
 
 export async function getAllCategories(): Promise<string[]> {
@@ -211,28 +181,6 @@ export async function getPostsByCategory(
   );
 }
 
-export async function getPaginatedPostsByCategory(
-  category: string,
-  page = 1,
-  includesDrafts = false
-): Promise<PaginatedPosts & { category: string }> {
-  const allCategoryPosts = await getPostsByCategory(category, includesDrafts);
-  const totalPosts = allCategoryPosts.length;
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-
-  const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
-  const posts = allCategoryPosts.slice(startIndex, endIndex);
-
-  return {
-    posts,
-    currentPage,
-    totalPages,
-    category,
-  };
-}
-
 export async function getAllTags(): Promise<string[]> {
   const posts = await getAllPosts();
   const tagsSet = new Set<string>();
@@ -252,26 +200,4 @@ export async function getPostsByTag(
 ): Promise<Post[]> {
   const allPosts = await getAllPosts(includesDrafts);
   return allPosts.filter((post) => post.tags && post.tags.includes(tag));
-}
-
-export async function getPaginatedPostsByTag(
-  tag: string,
-  page = 1,
-  includesDrafts = false
-): Promise<PaginatedPosts & { tag: string }> {
-  const allTagPosts = await getPostsByTag(tag, includesDrafts);
-  const totalPosts = allTagPosts.length;
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-
-  const currentPage = Math.max(1, Math.min(page, totalPages || 1));
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
-  const posts = allTagPosts.slice(startIndex, endIndex);
-
-  return {
-    posts,
-    currentPage,
-    totalPages,
-    tag,
-  };
 }
