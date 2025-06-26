@@ -123,10 +123,13 @@ export default function Hero() {
             'max-w-2xl'
           )}
         >
-          I&rsquo;m studying software engineering and fascinated
+          {/* I&rsquo;m studying software engineering and fascinated
           by AI. This is where I share my experiments, mistakes, and occasional
           wins. If you&rsquo;re also learning, maybe we can figure things out
-          together.
+          together. */}
+          CS student trying to make sense of AI and software development.
+          I put my notes and experiments here - some good, some terrible, all real. 
+          Welcome to the mess.
         </p>
 
         <SubstackSignupForm />

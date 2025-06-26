@@ -1,236 +1,69 @@
 {
+  "personalInfo": {
+    "name": "Sayed Hanan",
+    "passion": "Building ML & Web solutions with impact",
+    "current": "B.Sc. Software Engineering, Virtual University (Expected Sept 2025)"
+  },
+  "projects": [
+    "Machine Translation Urdu to English (Tokenizer & Model from scratch)",
+    "Retrieval Augmented Generation Research Assistant (arXiv dataset)",
+    "Fine-tuning MiT-a Vision Transformer for Semantic Segmentation",
+    "Churn Prediction Dashboard (86% accuracy, Streamlit)",
+    "Email Classification Model (96.77% accuracy, Dockerized)",
+    "Brain Tumor Classification with Transfer Learning (89% accuracy)",
+    "GPT-2 Fine-Tuning with Weights & Biases Integration"
+  ],
+  "skills": {
+    "programming": "Python",
+    "ai": "TensorFlow, PyTorch, scikit-learn, Hugging Face, LangChain",
+    "web": "Django, Streamlit",
+    "tools": "Docker, MLflow, Wandb, DVC, Kubernetes, AWS"
+  },
   "commands": {
     "help": {
       "description": "Show available commands",
-      "category": "system",
-      "usage": "help",
-      "handler": "basic",
-      "response": [
-        "Available commands:",
-        "  help           – Show available commands",
-        "  about          – About me",
-        "  projects       – Show recent projects",
-        "  skills         – List technical skills",
-        "  contact        – Show contact information",
-        "  resume         – Display resume",
-        "  blog search <query> – Search blog posts",
-        "  notes <topic>  – Access study notes",
-        "  algorithm <name> – Show algorithm demo",
-        "  learn <topic>  – Learn about CS/AI concepts",
-        "  cheatsheet <tech> – Show quick reference",
-        "  complexity <algo> – Big O analysis",
-        "  clear          – Clear terminal history"
-      ]
+      "type": "help",
+      "content": ""
     },
     "about": {
       "description": "About me",
-      "category": "personal",
-      "usage": "about",
-      "handler": "basic",
-      "response": [
-        "CS/AI Student & Full Stack Developer",
-        "Passionate about machine learning and web technologies",
-        "Building the future, one algorithm at a time",
-        "Currently exploring: Deep Learning, React, Next.js"
-      ]
-    },
-    "projects": {
-      "description": "Show recent projects",
-      "category": "personal",
-      "usage": "projects",
-      "handler": "basic",
-      "response": [
-        "🚀 Recent Projects:",
-        "  • AI-powered recommendation system (2024)",
-        "  • Real-time chat application with WebSocket",
-        "  • Neural network visualization tool",
-        "  • Automated trading bot prototype"
-      ]
-    },
-    "skills": {
-      "description": "List technical skills",
-      "category": "personal",
-      "usage": "skills",
-      "handler": "basic",
-      "response": [
-        "💻 Programming: Python, JavaScript, TypeScript, Java",
-        "🤖 AI/ML: TensorFlow, PyTorch, scikit-learn, OpenAI API",
-        "🌐 Web: React, Next.js, Node.js, Express, PostgreSQL",
-        "☁️ Tools: Docker, AWS, Git, Linux"
-      ]
-    },
-    "contact": {
-      "description": "Show contact information",
-      "category": "personal",
-      "usage": "contact",
-      "handler": "basic",
-      "response": [
-        "📧 Email: hello@sayedhanan.com",
-        "🐙 GitHub: github.com/sayedhanan",
-        "💼 LinkedIn: linkedin.com/in/sayedhanan",
-        "🐦 Twitter: @sayedhanan"
-      ]
+      "type": "about",
+      "content": ""
     },
     "resume": {
-      "description": "Display resume",
-      "category": "personal",
-      "usage": "resume",
-      "handler": "resume"
+      "description": "Download my resume",
+      "type": "download",
+      "content": "/resume.pdf"
     },
-    "blog": {
-      "description": "Search blog posts",
-      "category": "content",
-      "usage": "blog search <query>",
-      "handler": "blog",
-      "subcommands": ["search"]
+    "projects": {
+      "description": "List my projects",
+      "type": "projects",
+      "content": ""
     },
-    "notes": {
-      "description": "Access study notes",
-      "category": "learning",
-      "usage": "notes <topic>",
-      "handler": "notes",
-      "data": {
-        "algorithms": [
-          "• Time Complexity: O(1) < O(log n) < O(n) < O(n log n) < O(n²)",
-          "• Sorting: QuickSort avg O(n log n), worst O(n²)",
-          "• Binary Search: O(log n) on sorted arrays",
-          "• Graph traversal: BFS/DFS both O(V + E)"
-        ],
-        "ml": [
-          "• Supervised Learning: Classification & Regression",
-          "• Unsupervised: Clustering, Dimensionality Reduction",
-          "• Neural Networks: Input → Hidden → Output layers",
-          "• Gradient Descent: θ = θ - α∇J(θ)"
-        ],
-        "react": [
-          "• State Management: useState, useReducer, Context",
-          "• Effects: useEffect for side effects & cleanup",
-          "• Performance: useMemo, useCallback, React.memo",
-          "• Patterns: HOCs, Render Props, Custom Hooks"
-        ]
-      }
+    "skills": {
+      "description": "Technical skills overview",
+      "type": "skills",
+      "content": ""
     },
-    "algorithm": {
-      "description": "Show algorithm demo",
-      "category": "learning",
-      "usage": "algorithm <name>",
-      "handler": "algorithm",
-      "data": {
-        "bubble": {
-          "desc": "Bubble Sort - O(n²) comparison-based sorting",
-          "demo": "\nStep 1: [64, 34, 25, 12, 22, 11, 90]\n        Compare 64 & 34 → Swap\nStep 2: [34, 64, 25, 12, 22, 11, 90]\n        Compare 64 & 25 → Swap\n...\nFinal:  [11, 12, 22, 25, 34, 64, 90]"
-        },
-        "binary": {
-          "desc": "Binary Search - O(log n) search in sorted array",
-          "demo": "\nArray: [1, 3, 5, 7, 9, 11, 13, 15]\nFind: 7\nStep 1: mid = 9 (too high, search left)\nStep 2: mid = 3 (too low, search right)\nStep 3: mid = 7 (found!) → index 3"
-        },
-        "dfs": {
-          "desc": "Depth-First Search - Graph traversal",
-          "demo": "\nGraph:    A\n         / \\\n        B   C\n       /   / \\\n      D   E   F\n\nDFS order: A → B → D → C → E → F\nStack: [A] → [B,C] → [D,C] → [C] → [E,F] → [F] → []"
-        }
-      }
+    "education": {
+      "description": "Educational background",
+      "type": "education",
+      "content": ""
     },
-    "learn": {
-      "description": "Learn about CS/AI concepts",
-      "category": "learning",
-      "usage": "learn <topic>",
-      "handler": "learn",
-      "data": {
-        "neural": [
-          "🧠 Neural Networks:",
-          "• Inspired by biological neurons",
-          "• Layers: Input → Hidden → Output",
-          "• Activation functions: ReLU, Sigmoid, Tanh",
-          "• Training: Forward pass + Backpropagation"
-        ],
-        "recursion": [
-          "🔄 Recursion:",
-          "• Function calls itself with smaller input",
-          "• Base case: stops the recursion",
-          "• Recursive case: calls itself",
-          "• Examples: Factorial, Fibonacci, Tree traversal"
-        ],
-        "bigO": [
-          "📊 Big O Notation:",
-          "• Describes algorithm efficiency",
-          "• Focus on worst-case scenario",
-          "• Common complexities: O(1), O(log n), O(n), O(n²)",
-          "• Space vs Time complexity trade-offs"
-        ]
-      }
+    "certifications": {
+      "description": "My certifications",
+      "type": "certifications",
+      "content": ""
     },
-    "cheatsheet": {
-      "description": "Show quick reference",
-      "category": "reference",
-      "usage": "cheatsheet <tech>",
-      "handler": "cheatsheet",
-      "data": {
-        "git": [
-          "📋 Git Cheatsheet:",
-          "• git init - Initialize repository",
-          "• git add . - Stage all changes",
-          "• git commit -m 'msg' - Commit changes",
-          "• git push origin main - Push to remote",
-          "• git pull - Fetch and merge",
-          "• git branch -b name - Create new branch"
-        ],
-        "python": [
-          "🐍 Python Cheatsheet:",
-          "• Lists: arr = [1,2,3], arr.append(4)",
-          "• Dicts: d = {'key': 'value'}, d['key']",
-          "• Loops: for i in range(10), while condition",
-          "• Functions: def func(param): return value",
-          "• Classes: class Name: def __init__(self):"
-        ],
-        "sql": [
-          "🗄️ SQL Cheatsheet:",
-          "• SELECT * FROM table WHERE condition",
-          "• INSERT INTO table VALUES (val1, val2)",
-          "• UPDATE table SET col=val WHERE condition",
-          "• DELETE FROM table WHERE condition",
-          "• JOIN: INNER, LEFT, RIGHT, FULL OUTER"
-        ]
-      }
-    },
-    "complexity": {
-      "description": "Big O analysis",
-      "category": "learning",
-      "usage": "complexity <algo>",
-      "handler": "complexity",
-      "data": {
-        "bubble": {
-          "time": "O(n²)",
-          "space": "O(1)",
-          "desc": "Quadratic time, constant space"
-        },
-        "merge": {
-          "time": "O(n log n)",
-          "space": "O(n)",
-          "desc": "Linearithmic time, linear space"
-        },
-        "binary": {
-          "time": "O(log n)",
-          "space": "O(1)",
-          "desc": "Logarithmic time, constant space"
-        },
-        "dfs": {
-          "time": "O(V + E)",
-          "space": "O(V)",
-          "desc": "Linear in vertices + edges"
-        }
-      }
+    "contact": {
+      "description": "Contact information",
+      "type": "contact",
+      "content": ""
     },
     "clear": {
       "description": "Clear terminal history",
-      "category": "system",
-      "usage": "clear",
-      "handler": "clear"
+      "type": "clear",
+      "content": ""
     }
-  },
-  "settings": {
-    "welcomeMessage": "Welcome to Interactive Portfolio v2.0",
-    "prompt": "$",
-    "theme": "matrix",
-    "maxHistorySize": 100
   }
 }

@@ -1,0 +1,51 @@
+{
+    "personalInfo": {
+      "name": "CS/AI Student & Full Stack Developer",
+      "passion": "Passionate about machine learning and web technologies",
+      "current": "Currently exploring: Deep Learning, React, Next.js"
+    },
+    "projects": [
+      "AI-powered recommendation system (2024)",
+      "Real-time chat application with WebSocket",
+      "Neural network visualization tool",
+      "Automated trading bot prototype"
+    ],
+    "skills": {
+      "programming": "Python, JavaScript, TypeScript, Java",
+      "ai": "TensorFlow, PyTorch, scikit-learn, OpenAI API",
+      "web": "React, Next.js, Node.js, Express, PostgreSQL",
+      "tools": "Docker, AWS, Git, Linux"
+    },
+    "commands": {
+      "help": {
+        "description": "Show available commands",
+        "type": "help",
+        "content": "Available commands:\n• help - Show this help message\n• about - About me\n• projects - Recent projects\n• skills - Technical skills\n• contact - Contact information\n• clear - Clear terminal"
+      },
+      "about": {
+        "description": "About me",
+        "type": "about",
+        "content": "🚀 {name}\n{passion}\nBuilding the future, one algorithm at a time\n{current}"
+      },
+      "projects": {
+        "description": "Show recent projects",
+        "type": "projects",
+        "content": "🚀 Recent Projects:\n{projects}"
+      },
+      "skills": {
+        "description": "List technical skills",
+        "type": "skills",
+        "content": "💻 Programming: {programming}\n🤖 AI/ML: {ai}\n🌐 Web: {web}\n☁️ Tools: {tools}"
+      },
+      "contact": {
+        "description": "Show contact information",
+        "type": "contact",
+        "content": "📧 Email: hello@sayedhanan.com\n🐙 GitHub: github.com/sayedhanan\n💼 LinkedIn: linkedin.com/in/sayedhanan\n🐦 Twitter: @sayedhanan"
+      },
+      "clear": {
+        "description": "Clear terminal history",
+        "type": "clear",
+        "content": ""
+      }
+    }
+  }
